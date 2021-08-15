@@ -17,23 +17,23 @@ const initAuth = () => {
         privateKey: process.env.FIREBASE_PRIVATE_KEY
           ? JSON.parse(process.env.FIREBASE_PRIVATE_KEY)
           : undefined,
-        privateKeyId: "8ad79c6464f7d8a681f9442e09cfa3aae1bf7ef5",
-        clientId: "8ad79c6464f7d8a681f9442e09cfa3aae1bf7ef5",
-        authUri: "https://accounts.google.com/o/oauth2/auth",
-        tokenUri: "https://oauth2.googleapis.com/token",
-        authProviderX509CertUrl: "https://www.googleapis.com/oauth2/v1/certs",
+        privateKeyId: process.env.FIREBASE_PRIVATE_KEY_ID,
+        clientId: process.env.FIREBASE_PRIVATE_KEY_CLIENT_ID,
+        authUri: process.env.FIREBASE_PRIVATE_KEY_AUTH_URL,
+        tokenUri: process.env.FIREBASE_PRIVATE_KEY_TOKEN_URL,
+        authProviderX509CertUrl: process.env.FIREBASE_PRIVATE_KEY,
       },
-      databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
+      databaseURL: process.env.FIREBASE_PRIVATE_KEY_X509_CERT_URL
     },
     firebaseClientInitConfig: {
-      databaseURL: "next-event-eb2ff.firebaseio.com",
-      apiKey: "AIzaSyBR5IBDc-0gbZdnDL0B2XM5kgMF4K7eSKM",
-      authDomain: "next-event-eb2ff.firebaseapp.com",
-      projectId: "next-event-eb2ff",
-      storageBucket: "next-event-eb2ff.appspot.com",
-      messagingSenderId: "117461649566",
-      appId: "1:117461649566:web:3aa10f036f8f2e6e8ed38f",
-      measurementId: "G-PGCS29LPYZ"
+      databaseURL: process.env.FIREBASE_CLIENT_DB_URL,
+      apiKey: process.env.FIREBASE_CLIENT_API_KEY,
+      authDomain: process.env.FIREBASE_CLIENT_AUTHDOMAIN,
+      projectId: process.env.FIREBASE_CLIENT_PROJECTID,
+      storageBucket: process.env.FIREBASE_CLIENT_STORAGEBUCKET,
+      messagingSenderId: process.env.FIREBASE_CLIENT_MESSAGING_SENDERID,
+      appId: process.env.FIREBASE_CLIENT_APPID,
+      measurementId: process.env.FIREBASE_CLIENT_MEASUREMENTID
     },
     cookies: {
       name: 'gawe.fun',
