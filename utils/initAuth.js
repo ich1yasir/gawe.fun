@@ -3,7 +3,7 @@ import { init } from 'next-firebase-auth'
 const TWELVE_DAYS_IN_MS = 12 * 60 * 60 * 24 * 1000
 
 const initAuth = () => {
-  init({
+  var conf = {
     debug: false,
     authPageURL: '/auth',
     appPageURL: '/',
@@ -23,17 +23,17 @@ const initAuth = () => {
         tokenUri: process.env.FIREBASE_PRIVATE_KEY_TOKEN_URL,
         authProviderX509CertUrl: process.env.FIREBASE_PRIVATE_KEY,
       },
-      databaseURL: process.env.FIREBASE_PRIVATE_KEY_X509_CERT_URL
+      databaseURL: process.env.FIREBASE_PRIVATE_KEY_X509_CERT_URL,
     },
     firebaseClientInitConfig: {
       databaseURL: process.env.FIREBASE_CLIENT_DB_URL,
-      apiKey: process.env.FIREBASE_CLIENT_API_KEY,
+      apiKey: "AIzaSyBR5IBDc-0gbZdnDL0B2XM5kgMF4K7eSKM",
       authDomain: process.env.FIREBASE_CLIENT_AUTHDOMAIN,
       projectId: process.env.FIREBASE_CLIENT_PROJECTID,
       storageBucket: process.env.FIREBASE_CLIENT_STORAGEBUCKET,
       messagingSenderId: process.env.FIREBASE_CLIENT_MESSAGING_SENDERID,
       appId: process.env.FIREBASE_CLIENT_APPID,
-      measurementId: process.env.FIREBASE_CLIENT_MEASUREMENTID
+      measurementId: process.env.FIREBASE_CLIENT_MEASUREMENTID,
     },
     cookies: {
       name: 'gawe.fun',
@@ -49,8 +49,9 @@ const initAuth = () => {
       secure: process.env.NEXT_PUBLIC_COOKIE_SECURE === 'true',
       signed: true,
     },
-  }
-  )
+  };
+  console.log(conf)
+  init(conf)
 }
 
 export default initAuth
