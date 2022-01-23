@@ -17,8 +17,7 @@ export default function Home() {
         </h1>
 
         <p className={styles.description}>
-          <code className={styles.code}>few days left</code> 
-          
+          <code className={styles.code}>few days left</code>
         </p>
 
       </main>
