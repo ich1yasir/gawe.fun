@@ -1,6 +1,5 @@
 {
   "name": "gawe.fun",
-  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,22 +8,12 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@emotion/react": "^11.4.0",
-    "@emotion/styled": "^11.3.0",
-    "@fontsource/sacramento": "^4.5.0",
-    "@material-ui/core": "^5.0.0-beta.1",
-    "@material-ui/icons": "^5.0.0-beta.1",
-    "babel-plugin-styled-components": "^1.13.2",
-    "firebase": "^8.8.1",
-    "firebase-admin": "^9.11.0",
-    "next": "11.0.1",
-    "next-firebase-auth": "^0.13.2",
+    "next": "12.0.8",
     "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "react-firebaseui": "^5.0.2"
+    "react-dom": "17.0.2"
   },
   "devDependencies": {
-    "eslint": "7.31.0",
-    "eslint-config-next": "11.0.1"
+    "eslint": "8.7.0",
+    "eslint-config-next": "12.0.8"
   }
 }
