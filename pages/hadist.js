@@ -22,10 +22,10 @@ export default function Home() {
           Referensi <a>Islam!</a>
         </h1>
 
-        <div className={styles.grid}>
+        <div className={styles.grid_hadist}>
             <Paper
               component="form"
-              sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 600 }}
+              sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: {lg: '70%', md: '90%', xs: '90%'} }}
             >
               <Icon sx={{ m: '10px' }} >
                 <LocalLibraryIcon />

@@ -13,7 +13,7 @@ const CardAyat = ({ ayat }) => {
     </div>;
 }
 
-const queryPage = () => {
+const QueryPage = () => {
     const [hadist, setHadist] = useState([]);
     const [loading, setLoading] = useState(false);
     const [loadMore, setLoadMore] = useState(false);
@@ -57,8 +57,8 @@ const queryPage = () => {
                 <meta name="description" content="Mencari hukum islam cari hadist dan ayat alquran hanya ada di Referensi Islam" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className={styles.main}>
-                <h1 className={styles.title}>
+            <main className={styles.main_hadist}>
+                <h1 className={styles.title_hadist}>
                     Referensi <a>Islam!</a>
                 </h1>
 
@@ -75,7 +75,7 @@ const queryPage = () => {
                 </div>
             </main>
 
-            <footer className={styles.footer}>
+            <footer className={styles.footer_hadist}>
                 Powered by{' '}
                 <span className={styles.logo}>
                     <a><i>One team</i></a>
@@ -85,4 +85,4 @@ const queryPage = () => {
     )
 }
 
-export default queryPage
+export default QueryPage
