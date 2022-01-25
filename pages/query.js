@@ -29,7 +29,6 @@ const QueryPage = () => {
             axios.get(`/api/query?q=${q}&p=${page}&k=${key}`)
                 .then(res => {
                     const listHadis = res.data;
-                    console.log(listHadis)
                     setHadist([...hadist, ...listHadis]);
                     const nextPage = page+1;
                     setPage(nextPage)

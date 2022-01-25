@@ -1,20 +1,25 @@
 import Head from 'next/head'
-import { useRouter } from 'next/router'
+import Router from "next/router";
 import styles from '../styles/Home.module.css'
 import { Icon, IconButton, InputBase, Paper } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import LocalLibraryIcon from '@mui/icons-material/LocalLibrary';
 import { useState } from 'react';
 
+const preventDefault = f => e => {
+  e.preventDefault()
+  f(e)
+}
+
 export default function Home() {
-  const router = useRouter()
-  
   const [query, setQuery] = useState("");
-  const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
-      router.push(`/query?q=${query}`)
-    }
-  }
+  const handleSubmit = preventDefault(() => {
+    Router.push({
+      pathname: "/query",
+      query: {q: query},
+    })
+  })
+  
   return (
     <div className={styles.container_hadist}>
       <Head>
@@ -28,34 +33,32 @@ export default function Home() {
           Referensi <a>Islam!</a>
         </h1>
 
-        <div className={styles.grid_hadist}>
-            <Paper
-              component="form"
-              sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: {lg: '70%', md: '90%', xs: '90%'} }}
-            >
-              <Icon sx={{ m: '10px' }} >
-                <LocalLibraryIcon />
-              </Icon>
-              <InputBase
-                sx={{ ml: 1, flex: 1 }}
-                placeholder="Cari Referensi Tentang: Mendidik anak"
-                inputProps={{ 'aria-label': 'Cari Referensi tentang' }}
-                value={query}
-                onKeyDown={handleKeyDown}
-                onChange={e => setQuery(e.target.value)}
-              />
-              <IconButton href={`/query?q=${query}`} type="submit" sx={{ p: '10px' }} aria-label="search">
-                <SearchIcon />
-              </IconButton>
-            </Paper>
-        </div>
+        <form className={styles.grid_hadist} onSubmit={handleSubmit}>
+          <Paper
+            sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: { lg: '70%', md: '90%', xs: '90%' } }}
+          >
+            <Icon sx={{ m: '10px' }} >
+              <LocalLibraryIcon />
+            </Icon>
+            <InputBase
+              sx={{ ml: 1, flex: 1 }}
+              placeholder="Cari Referensi Tentang: Mendidik anak"
+              inputProps={{ 'aria-label': 'Cari Referensi tentang' }}
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+            />
+            <IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
+              <SearchIcon />
+            </IconButton>
+          </Paper>
+        </form>
       </main>
 
       <footer className={styles.footer_hadist}>
-          Powered by{' '}
-          <span className={styles.logo}>
-            <a><i>One team</i></a>
-          </span>
+        Powered by{' '}
+        <span className={styles.logo}>
+          <a><i>One team</i></a>
+        </span>
       </footer>
     </div>
   )
