@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import Router from "next/router";
-import styles from '../styles/Home.module.css'
+import styles from '../../styles/Home.module.css'
 import { Icon, IconButton, InputBase, Paper } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import LocalLibraryIcon from '@mui/icons-material/LocalLibrary';
@@ -15,7 +15,7 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const handleSubmit = preventDefault(() => {
     Router.push({
-      pathname: "/query",
+      pathname: "/hadist/search",
       query: {q: query},
     })
   })

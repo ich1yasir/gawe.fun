@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Head from 'next/head'
 import axios from 'axios';
-import styles from '../styles/Home.module.css'
+import styles from '../../styles/Home.module.css'
 import { Button, CircularProgress, LinearProgress } from '@mui/material';
 
 const CardAyat = ({ ayat }) => {
