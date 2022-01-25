@@ -7,7 +7,7 @@ export default function Home() {
     <div className={styles.container}>
       <Head>
         <title>Gawe Fun</title>
-        <meta name="description" content="Aplikasi under estimate" />
+        <meta name="description" content="Kumpulan aplikasi sederhana, hanya untuk fun dan mengisi waktu luang" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
