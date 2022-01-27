@@ -71,12 +71,10 @@ const StyledTitle = styled(Typography)(({ theme }) => ({
 
 }));
 
-
 const preventDefault = f => e => {
     e.preventDefault()
     f(e)
 }
-
 
 export default function QueryPage(props) {
     const [query, setQuery] = useState("");
@@ -93,27 +91,34 @@ export default function QueryPage(props) {
         setLoadMore(false);
         if (q) {
             axios.get(`/api/query?q=${q}&p=${page}&k=${key}`)
-                .then(res => {
-                    const listHadis = res.data;
-                    setHadist([...hadist, ...listHadis]);
-                    const nextPage = page + 1;
-                    setPage(nextPage)
-                    if (listHadis.length < 10) {
-                        setLoadMore(false);
-                    } else {
-                        setLoadMore(true);
-                    }
-                    setLoading(false)
-                })
+            .then(res => {
+                const listHadis = res.data;
+                setHadist([...hadist, ...listHadis]);
+                const nextPage = page + 1;
+                setPage(nextPage)
+                if (listHadis.length < 10) {
+                    setLoadMore(false);
+                } else {
+                    setLoadMore(true);
+                }
+                setLoading(false)
+            })
+        }
+        if (q === ""){
+            router.push({
+                pathname: "/hadist"
+            })
         }
     }
 
     const handleSubmit = preventDefault(() => {
-        setHadist([]);
-        router.push({
-            pathname: "/hadist/search",
-            query: { q: query },
-        })
+        if (q.trim().toLowerCase() != query.trim().toLowerCase()){
+            setHadist([]);
+            router.push({
+                pathname: "/hadist/search",
+                query: { q: query.trim() },
+            })
+        }
     })
 
     useEffect(() => {

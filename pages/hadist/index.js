@@ -16,7 +16,7 @@ export default function Home() {
   const handleSubmit = preventDefault(() => {
     Router.push({
       pathname: "/hadist/search",
-      query: {q: query},
+      query: {q: query.trim()},
     })
   })
   
@@ -30,7 +30,7 @@ export default function Home() {
 
       <main className={styles.main_hadist}>
         <h1 className={styles.title_hadist}>
-          Referensi <a>Islam!</a>
+          Referensi <a>Hadist</a>
         </h1>
 
         <form className={styles.grid_hadist} onSubmit={handleSubmit}>
