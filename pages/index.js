@@ -33,19 +33,19 @@ export default function Home() {
   }
   const generateRandom = () => {
     var styelJSList = []
-    var row = -400
-    for (let i = 0; i < 35; i++) {
-      const topMargin = row + getRandom(30, 60)
-      const widthR = getRandom(10, 100)
-      const heightR = getRandom(5, 15)
+    var row = -45
+    for (let i = 0; i < 40; i++) {
+      const topMargin = row + getRandom(3, 8)
+      const widthR = getRandom(120, 180)
+      const heightR = getRandom(10, 25)
       const zVar= getRandom(5, 30)
       const data = {
         key: i+'',
-        margin: topMargin + 'px 10px 10px -10%',
+        margin: topMargin + '% 20% 0px -100%',
         zIndex: zVar+'',
         position: 'fixed',
         width: widthR + '%',
-        height: heightR + 'rem',
+        height: heightR + '%',
         backgroundColor: randomGreyHex()
       }
       row = topMargin
