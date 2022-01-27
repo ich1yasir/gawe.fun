@@ -16,21 +16,21 @@ export default function Home() {
   const handleSubmit = preventDefault(() => {
     Router.push({
       pathname: "/hadist/search",
-      query: {q: query},
+      query: {q: query.trim()},
     })
   })
   
   return (
     <div className={styles.container_hadist}>
       <Head>
-        <title>Referensi Islam</title>
-        <meta name="description" content="Mencari hukum islam cari hadist dan ayat alquran hanya ada di Referensi Islam" />
+        <title>Referensi Hadist</title>
+        <meta name="description" content="Mencari hukum dan referensi hadist islam" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main_hadist}>
         <h1 className={styles.title_hadist}>
-          Referensi <a>Islam!</a>
+          Referensi <a>Hadist</a>
         </h1>
 
         <form className={styles.grid_hadist} onSubmit={handleSubmit}>
