@@ -91,20 +91,20 @@ export default function QueryPage(props) {
         setLoadMore(false);
         if (q) {
             axios.get(`/api/query?q=${q}&p=${page}&k=${key}`)
-            .then(res => {
-                const listHadis = res.data;
-                setHadist([...hadist, ...listHadis]);
-                const nextPage = page + 1;
-                setPage(nextPage)
-                if (listHadis.length < 10) {
-                    setLoadMore(false);
-                } else {
-                    setLoadMore(true);
-                }
-                setLoading(false)
-            })
+                .then(res => {
+                    const listHadis = res.data;
+                    setHadist([...hadist, ...listHadis]);
+                    const nextPage = page + 1;
+                    setPage(nextPage)
+                    if (listHadis.length < 10) {
+                        setLoadMore(false);
+                    } else {
+                        setLoadMore(true);
+                    }
+                    setLoading(false)
+                })
         }
-        if (q === ""){
+        if (q === "") {
             router.push({
                 pathname: "/hadist"
             })
@@ -112,7 +112,7 @@ export default function QueryPage(props) {
     }
 
     const handleSubmit = preventDefault(() => {
-        if (q.trim().toLowerCase() != query.trim().toLowerCase()){
+        if (q.trim().toLowerCase() != query.trim().toLowerCase()) {
             setHadist([]);
             router.push({
                 pathname: "/hadist/search",
@@ -131,14 +131,14 @@ export default function QueryPage(props) {
     return (
         <React.Fragment>
             <Head>
-                <title>Referensi Islam</title>
-                <meta name="description" content="Mencari hukum islam cari hadist dan ayat alquran hanya ada di Referensi Islam" />
+                <title>Referensi Hadist</title>
+                <meta name="description" content="Mencari hukum dan referensi hadist islam" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <ElevationScroll {...props}>
                 <StyledAppBar>
                     <Toolbar>
-                        <StyledDiv sx={{display: 'flex', alignItems: 'center'}}>
+                        <StyledDiv sx={{ display: 'flex', alignItems: 'center' }}>
                             <StyledTitle>
                                 Hadist
                             </StyledTitle>

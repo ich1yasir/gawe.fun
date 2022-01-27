@@ -23,8 +23,8 @@ export default function Home() {
   return (
     <div className={styles.container_hadist}>
       <Head>
-        <title>Referensi Islam</title>
-        <meta name="description" content="Mencari hukum islam cari hadist dan ayat alquran hanya ada di Referensi Islam" />
+        <title>Referensi Hadist</title>
+        <meta name="description" content="Mencari hukum dan referensi hadist islam" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
