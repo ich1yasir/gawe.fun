@@ -7,7 +7,11 @@ import CssBaseline from '@mui/material/CssBaseline';
 import useScrollTrigger from '@mui/material/useScrollTrigger';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
+import dynamic from 'next/dynamic'
 
+const QrReader = dynamic(() => import('react-qr-reader'), {
+  ssr: false
+})
 function ElevationScroll(props) {
   const { children, window } = props;
   // Note that you normally won't need to set the window ref as useScrollTrigger
@@ -34,6 +38,17 @@ ElevationScroll.propTypes = {
 };
 
 export default function ElevateAppBar(props) {
+  
+  const [uri, setUrl] = React.useState("")
+
+  const handleScan = (data) => {
+    if (data) {
+      setUrl(data)
+    }
+  };
+  const handleError = (err) => {
+    console.error(err);
+  };
   return (
     <React.Fragment>
       <CssBaseline />
@@ -48,6 +63,12 @@ export default function ElevateAppBar(props) {
       </ElevationScroll>
       <Toolbar />
       <Container>
+        <QrReader
+          delay={300}
+          onError={handleError}
+          onScan={handleScan}
+        />
+        <p>{uri}</p>
         <Box sx={{ my: 2 }}>
           {[...new Array(1200)]
             .map(
