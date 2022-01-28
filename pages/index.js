@@ -11,24 +11,24 @@ export default function Home() {
     return Math.random() * (max - min) + min;
   }
   function randomGreyHex() {
-    var v = (Math.random()*(230)|150).toString(16);//bitwise OR. Gives value in the range 0-255 which is then converted to base 16 (hex).
+    var v = (Math.random() * (230) | 150).toString(16);//bitwise OR. Gives value in the range 0-255 which is then converted to base 16 (hex).
     return "#" + v + v + v;
   }
   function shuffle(array) {
-    let currentIndex = array.length,  randomIndex;
-  
+    let currentIndex = array.length, randomIndex;
+
     // While there remain elements to shuffle...
     while (currentIndex != 0) {
-  
+
       // Pick a remaining element...
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex--;
-  
+
       // And swap it with the current element.
       [array[currentIndex], array[randomIndex]] = [
         array[randomIndex], array[currentIndex]];
     }
-  
+
     return array;
   }
   const generateRandom = () => {
@@ -38,11 +38,11 @@ export default function Home() {
       const topMargin = row + getRandom(3, 8)
       const widthR = getRandom(120, 180)
       const heightR = getRandom(10, 25)
-      const zVar= getRandom(5, 30)
+      const zVar = getRandom(5, 30)
       const data = {
-        key: i+'',
+        key: i + '',
         margin: topMargin + '% 20% 0px -100%',
-        zIndex: zVar+'',
+        zIndex: zVar + '',
         position: 'fixed',
         width: widthR + '%',
         height: heightR + '%',
@@ -76,28 +76,32 @@ export default function Home() {
 
 
       </div>
-      <main className={styles.main} style={{zIndex: 100}}>
+      <main className={styles.main} style={{ zIndex: 100 }}>
         <h1 className={styles.title}>
           Gawe <a href="#">Fun</a>
         </h1>
 
         <p className={styles.description}>
-          <code className={styles.code}>Kumpulan aplikasi sederhana</code>
+          <code className={styles.code}>Kumpulan aplikasi sederhana : <Link href='/hadist'><a>Cari Hadist</a></Link>, <a href='#'>Antrian</a>, <a href='#' >Wacana</a></code>
         </p>
 
       </main>
 
-      <footer className={styles.footer} style={{zIndex: 100}}>
-        <a
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          By : One-Team
-        </a>
-        <a>
-          <code className={styles.code}> @GlobalOne Project</code>
-        </a>
+      <footer className={styles.footer} style={{ zIndex: 100 }}>
+        <span>By . {' '}
+          <a
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {' One-Team '} 
+          </a>
+        </span>
+        <span>
+          <a>
+            <code className={styles.code}>@GlobalOne</code>
+          </a>
+        </span>
       </footer>
     </div>
   )

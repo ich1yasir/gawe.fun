@@ -52,12 +52,18 @@
   align-items: center;
 }
 
-.footer a {
+.footer span {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-grow: 1;
 }
+
+.footer a {
+  color: #0eac00;
+  font-style: italic;
+}
+
 
 .title a {
   color: #177400;
@@ -97,6 +103,9 @@
   font-size: 1.1rem;
   font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
     Bitstream Vera Sans Mono, Courier New, monospace;
+}
+.code a{
+  color: #0eac00;
 }
 
 .grid {
@@ -172,7 +181,6 @@
   text-align: left;
   line-height: 1.5em;
 }
-
 
 .footer_hadist {
   width: 100%;
