@@ -24,7 +24,7 @@ export default function SignInForm() {
     return (
         <Box
             sx={{
-                marginTop: 8,
+                marginTop: '3rem',
                 display: 'flex',
                 maxWidth: '25rem',
                 flexDirection: 'column',
@@ -32,9 +32,6 @@ export default function SignInForm() {
                 marginX: 'auto'
             }}
         >
-            <Typography variant="h3">
-                Sign in
-            </Typography>
             <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
                 <TextField
                     margin="normal"

@@ -14,22 +14,27 @@ export default function VerticalLinearStepper() {
 
     return (
         <ThemeProvider theme={theme}>
-            <Box sx={{ minHeight: '100vh', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: "center", flexDirection: 'column'}}>
+            <Box sx={{ minHeight: '100vh', height: '100vh' }}>
                 <Grid container spacing={0}
                     alignItems="center"
-                    sx={{margin: 'auto'}}
+                    sx={{ margin: 'auto', minHeight: '100vh', height: '100vh' }}
                     justify="center" columns={{ xs: 6, sm: 12, md: 12 }}>
-                    <Grid xs={6} sm={6} md={9} >
-                        <Box sx={{ margin: 'auto', paddingLeft: '2rem' }} >
+
+                    <Grid xs={6} sm={6} md={3} sx={{ minHeight: '100vh', height: '100vh' }}>
+                        <Box sx={{ minHeight: '100vh', height: '100vh', padding: '1rem', marginY: 0, display: 'flex', justifyContent: 'center', alignItems: "center", flexDirection: 'column' }} boxShadow={10}  >
+
+                            <Typography variant="h3">
+                                Sign in
+                            </Typography>
+                            <SignInForm />
+                        </Box>
+                    </Grid>
+                    <Grid xs={6} sm={6} md={9} sx={{ minHeight: '100vh', height: '100vh' }}>
+                        <Box sx={{ minHeight: '100vh', height: '100vh', paddingLeft: '2rem', display: 'flex', justifyContent: 'center', alignItems: "left", flexDirection: 'column' }} >
                             <Typography variant='h3' align="left">
                                 Create Antrian
                             </Typography>
                             <StepperCreateAntrian />
-                        </Box>
-                    </Grid>
-                    <Grid xs={6} sm={6} md={3}>
-                        <Box sx={{ padding: '1rem', marginY: 0, backgroundColor: grey[200] }} boxShadow={10}  >
-                            <SignInForm />
                         </Box>
                     </Grid>
                 </Grid>
