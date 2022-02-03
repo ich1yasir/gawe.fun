@@ -4,14 +4,19 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import StepContent from '@mui/material/StepContent';
+import GoogleIcon from '@mui/icons-material/Google';
+import FacebookIcon from '@mui/icons-material/Facebook';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField } from '@mui/material';
+import { FormControl, FormControlLabel, Grid, IconButton, InputLabel, MenuItem, Select, Switch, TextField } from '@mui/material';
+import { blue, orange, red } from '@mui/material/colors';
+import FirebaseAuth from '../FirebaseAuth';
+import { AuthAction, withAuthUser } from 'next-firebase-auth';
 
 
 
-export default function StepperCreateAntrian(props) {
+function StepperCreateAntrian(props) {
     const [activeStep, setActiveStep] = React.useState(0);
     const [company, setCompany] = React.useState('');
 
@@ -23,7 +28,7 @@ export default function StepperCreateAntrian(props) {
             label: 'Name of Antrian',
             description: `Fill basic info for antrian. nama antrian and type of organization`,
             component: (
-                <Box sx={{ margin: '1rem' }}>
+                <Box sx={{ maxWidth: '25rem' }}>
                     <TextField id="antrian-name" fullWidth label="Name" variant="outlined" sx={{ marginY: '0.5rem' }} />
                     <FormControl fullWidth sx={{ marginY: '0.5rem' }}>
                         <InputLabel id="label-company">Company Sector</InputLabel>
@@ -51,7 +56,7 @@ export default function StepperCreateAntrian(props) {
             label: 'Set up',
             description: 'Create as public or private Antrian, how many line.',
             component: (
-                <Box sx={{ margin: '1rem' }}>
+                <Box sx={{ maxWidth: '25rem' }}>
                     <TextField id="antrian-line" type='Number' fullWidth label="Line of Antrian" variant="outlined" sx={{ marginY: '0.5rem' }} />
                     <TextField id="antrian-line" type='Number' fullWidth label="Active for (days)" variant="outlined" sx={{ marginY: '0.5rem' }} />
                     <FormControlLabel
@@ -65,15 +70,50 @@ export default function StepperCreateAntrian(props) {
         },
         {
             label: "Let me know who you're",
-            description: `Try out different ad text to see what brings in the most customers,
-                  and learn how to enhance your ads using features like ad extensions.
-                  If you run into any problems with your ads, find out how to tell if
-                  they're running and how to resolve approval issues.`,
+            description: ``,
             component: (
-                <Box>
-                    <TextField id="outlined-basic" label="Outlined" variant="outlined" />
-                    <TextField id="filled-basic" label="Filled" variant="filled" />
-                    <TextField id="standard-basic" label="Standard" variant="standard" />
+                <Box sx={{ maxWidth: '25rem' }}>
+                    <FirebaseAuth/>
+                    {/* <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="email"
+                        label="Email Address"
+                        name="email"
+                        autoComplete="email"
+                        autoFocus
+                    />
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="password"
+                        label="Password"
+                        type="password"
+                        id="password"
+                        autoComplete="current-password"
+                    />
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <Grid container spacing={0} sx={{ maxWidth: '12rem' }}>
+                            <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <Typography variant='h5'><b>
+                                    Or.</b>
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <IconButton size="large">
+                                    <GoogleIcon sx={{ fontSize: 40, color: orange[800] }} />
+                                </IconButton>
+                            </Grid>
+                            <Grid item xs={4}  sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <IconButton size="large">
+                                    <FacebookIcon sx={{ fontSize: 40, color: blue[500] }} />
+                                </IconButton>
+                            </Grid>
+                        </Grid>
+
+                    </Box> */}
                 </Box>
             )
         },
@@ -141,3 +181,8 @@ export default function StepperCreateAntrian(props) {
         </Box>
     );
 }
+export default withAuthUser({
+    whenAuthed: AuthAction.REDIRECT_TO_APP,
+    whenUnauthedBeforeInit: AuthAction.RETURN_NULL,
+    whenUnauthedAfterInit: AuthAction.RENDER,
+  })(StepperCreateAntrian)
