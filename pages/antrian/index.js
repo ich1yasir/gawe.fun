@@ -6,12 +6,14 @@ import theme from '../theme';
 import { ThemeProvider } from '@mui/system';
 // import SignInForm from '../../components/SignInForm';
 import StepperCreateAntrian from '../../components/StepperCreateAntrian';
+import BackgroundAntrian from '../../components/background/antrian';
 
 
 
 export default function VerticalLinearStepper() {
     return (
         <ThemeProvider theme={theme}>
+            <BackgroundAntrian/>
             <Box sx={{ minHeight: '100vh', height: '100vh' }}>
                 <Grid container spacing={0}
                     alignItems="center"
