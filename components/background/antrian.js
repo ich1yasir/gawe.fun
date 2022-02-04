@@ -30,34 +30,41 @@ export default function BackgroundAntrian() {
     }
     const generateRandom = () => {
         var styelJSList = []
-        var row = -45
-        for (let i = 0; i < 40; i++) {
-            const topMargin = row + getRandom(3, 8)
+        var row = -4
+        let i = 0;
+        while (row < 100) {
+            const leftMargin = row + getRandom(3, 7)
             const widthR = getRandom(120, 180)
-            const heightR = getRandom(10, 25)
+            const heightR = getRandom(10, 40)
             const zVar = getRandom(5, 30)
             const data = {
                 key: i + '',
-                margin: topMargin + '% 20% 0px -100%',
+                marginLeft: leftMargin+'%',
+                marginBottom: '0px',
                 zIndex: zVar + '',
                 position: 'fixed',
-                width: widthR + '%',
-                height: heightR + '%',
+                width:  '3%',
+                height:  heightR+'%',
                 backgroundColor: randomGreyHex()
             }
-            row = topMargin
+            row = leftMargin
             styelJSList.push(data)
+            i++;
         }
+
+        const RedItem = getRandom(0, styelJSList.length-3)
+        styelJSList[Math.round(RedItem)].backgroundColor = '#ff0000'
         setBoxes(shuffle(styelJSList));
+
     }
     useEffect(() => {
         // Update the document title using the browser API
         generateRandom();
     }, []);
     return (
-        <div className={styles.background_boxes}>
+        <div className={styles.background_boxes_antrian}>
             {boxes.map((box, index) => (
-                <div key={index} className={styles.box1} style={box}>
+                <div key={index} className={styles.box2} style={box}>
 
                 </div>
             ))}

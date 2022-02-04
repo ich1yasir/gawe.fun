@@ -187,7 +187,7 @@ function StepperCreateAntrian(props) {
 
 
     return (
-        <Box sx={{ maxWidth: "50rem", marginLeft: '1rem', marginTop: '4rem' }} width={{ xs: '90%', sm: '90%', md: '40rem' }}>
+        <Box boxShadow={20} sx={{ maxWidth: "50rem", marginTop: '1rem', padding: '1rem', backgroundColor: 'rgba(255,255,255, 0.9)' }} width={{ xs: '90%', sm: '90%', md: '40rem' }}>
             <Stepper activeStep={activeStep} orientation="vertical">
                 {steps.map((step, index) => (
                     <Step key={step.label}>
