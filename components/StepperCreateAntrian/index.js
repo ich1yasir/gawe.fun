@@ -239,7 +239,8 @@ function StepperCreateAntrian(props) {
     );
 }
 export default withAuthUser({
-    //whenAuthed: AuthAction.REDIRECT_TO_APP,
+    appPageURL: '/antrian/board',
+    whenAuthed: AuthAction.REDIRECT_TO_APP,
     whenUnauthedBeforeInit: AuthAction.RENDER,
     whenUnauthedAfterInit: AuthAction.RENDER,
 })(StepperCreateAntrian)

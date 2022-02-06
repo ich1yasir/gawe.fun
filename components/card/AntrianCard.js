@@ -31,68 +31,66 @@ export default function AntrianCard() {
         }} elevation={5}>
             <Grid container spacing={2}>
                 <Grid item>
-                    <ButtonBase sx={{ width: 128, height: 128 }}>
+                    <ButtonBase sx={{ width: 100, height: 100 }}>
                         <Img alt="complex" src="/ticket-icon.svg" />
                     </ButtonBase>
                 </Grid>
-                    <Grid item xs={12} sm container>
-                        <Grid item xs container direction="column" spacing={2}>
-                            <Grid item Button xs>
-                                <Link href='#'>
-                                    <a>
-                                        <Typography color='primary' gutterBottom variant="h4" component="div">
-                                            Teller 1 BCA Mangga dua
-                                        </Typography>
-                                    </a>
-                                </Link>
-                                <Typography variant="body2" gutterBottom>
+                <Grid item xs={12} sm container>
+                    <Grid item xs container direction="column" spacing={2}>
+                        <Grid item xs>
+                            <ButtonBase width='100%' sx={{ paddingRight: '1rem', display: 'flex', flexDirection: 'column', justifyContent: 'left', alignItems:'flex-start'}}>
+                                <Typography color='primary' textAlign='start' variant="h5" component="div">
+                                    Teller 1 BCA Mangga dua
+                                </Typography>
+                                <Typography variant="body2" textAlign='start'>
                                     (BANK) - Mangga Dua Block 10E, Jakarta selatan, DKI Jakarta
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
+                                <Typography variant="body2" textAlign='start' color="text.secondary">
                                     CODE: TBCA0000XX
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
+                                <Typography variant="body2" textAlign='start' color="text.secondary">
                                     STATUS: Close
                                 </Typography>
-                            </Grid>
-                            {/* <Grid item>
+                            </ButtonBase>
+                        </Grid>
+                        {/* <Grid item>
                             <Button>
                                 <Typography fontWeight='bold' variant="body2">
                                     get direction
                                 </Typography>
                             </Button>
                         </Grid> */}
-                        </Grid>
-                        <Grid item>
-                            <Tooltip title="Open settings">
-                                <IconButton sx={{ p: 0 }} onClick={handleOpenUserMenu}>
-                                    <More />
-                                </IconButton>
-                            </Tooltip>
-                            <Menu
-                                sx={{ mt: '45px' }}
-                                id="menu-appbar"
-                                anchorEl={anchorElUser}
-                                anchorOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                keepMounted
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                open={Boolean(anchorElUser)}
-                                onClose={handleCloseUserMenu}
-                            >
-                                {settings.map((setting) => (
-                                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                        <Typography textAlign="center">{setting}</Typography>
-                                    </MenuItem>
-                                ))}
-                            </Menu>
-                        </Grid>
                     </Grid>
+                    <Grid item>
+                        <Tooltip title="Open settings">
+                            <IconButton sx={{ p: '5px' }} onClick={handleOpenUserMenu}>
+                                <More />
+                            </IconButton>
+                        </Tooltip>
+                        <Menu
+                            sx={{ mt: '45px' }}
+                            id="menu-appbar"
+                            anchorEl={anchorElUser}
+                            anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            keepMounted
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            open={Boolean(anchorElUser)}
+                            onClose={handleCloseUserMenu}
+                        >
+                            {settings.map((setting) => (
+                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                                    <Typography textAlign="center">{setting}</Typography>
+                                </MenuItem>
+                            ))}
+                        </Menu>
+                    </Grid>
+                </Grid>
             </Grid>
         </Paper>
     );
