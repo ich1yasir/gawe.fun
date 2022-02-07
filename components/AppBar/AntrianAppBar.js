@@ -13,16 +13,32 @@ import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import Link from 'next/link';
+import Router from "next/router";
 import { ButtonBase } from '@mui/material';
+import { useRouter } from 'next/router'
+
+
 import {
     useAuthUser
 } from 'next-firebase-auth'
 
-const pages = ['Create New', 'Monitoring', 'Setting'];
+const pages = [
+    {
+        label: 'Create New',
+        directUrl: "/antrian/create"
+    },
+    {
+        label: 'Monitoring',
+        directUrl: "/antrian/board"
+    },
+    {
+        label: 'Setting',
+        directUrl: "/antrian/board"
+    }];
 const settings = ['Profile', 'Logout'];
 
 const AntrianAppBar = () => {
-
+    const rt = useRouter()
     const AuthUser = useAuthUser()
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -31,14 +47,14 @@ const AntrianAppBar = () => {
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
     };
+
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
     };
 
-    const handleCloseNavMenu = () => {
+    const handleCloseNavMenu = (url = null) => {
         setAnchorElNav(null);
     };
-
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
@@ -92,9 +108,20 @@ const AntrianAppBar = () => {
                                 display: { xs: 'block', md: 'none' },
                             }}
                         >
-                            {pages.map((page) => (
-                                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center">{page}</Typography>
+                            {pages.map((page, i) => (
+                                <MenuItem
+                                    key={i}
+                                    onClick={handleCloseNavMenu}
+                                >
+                                    <Link href={page.directUrl}>
+                                        <a>
+                                            <Typography
+                                                textAlign="center"
+                                            >
+                                                {page.label}
+                                            </Typography>
+                                        </a>
+                                    </Link>
                                 </MenuItem>
                             ))}
                         </Menu>
@@ -118,13 +145,21 @@ const AntrianAppBar = () => {
                         </ButtonBase>
                     </Box>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {pages.map((page) => (
+                        {pages.map((page, i) => (
                             <Button
-                                key={page}
+                                key={i}
                                 onClick={handleCloseNavMenu}
                                 sx={{ my: 2, color: 'white', display: 'block' }}
                             >
-                                {page}
+                                <Link href={page.directUrl}>
+                                    <a>
+                                        <Typography
+                                            textAlign="center"
+                                        >
+                                            {page.label}
+                                        </Typography>
+                                    </a>
+                                </Link>
                             </Button>
                         ))}
                     </Box>

@@ -8,9 +8,9 @@ import { ThemeProvider } from '@mui/system';
 import StepperCreateAntrian from '../../components/StepperCreateAntrian';
 import BackgroundAntrian from '../../components/background/antrian';
 
+import { AuthAction, withAuthUser } from 'next-firebase-auth';
 
-
-export default function VerticalLinearStepper() {
+function IndexAntrian() {
     return (
         <ThemeProvider theme={theme}>
             <BackgroundAntrian/>
@@ -45,3 +45,10 @@ export default function VerticalLinearStepper() {
         </ThemeProvider>
     );
 }
+
+export default withAuthUser({
+    appPageURL: '/antrian/board',
+    whenAuthed: AuthAction.REDIRECT_TO_APP,
+    whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
+    whenUnauthedAfterInit: AuthAction.RENDER,
+})(IndexAntrian)

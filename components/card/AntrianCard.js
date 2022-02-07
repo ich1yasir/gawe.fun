@@ -17,7 +17,7 @@ const Img = styled('img')({
 });
 
 const settings = ['Open', 'Close', 'Delete'];
-export default function AntrianCard() {
+export default function AntrianCard({antrian}) {
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -40,7 +40,7 @@ export default function AntrianCard() {
                         <Grid item xs>
                             <ButtonBase width='100%' sx={{ paddingRight: '1rem', display: 'flex', flexDirection: 'column', justifyContent: 'left', alignItems:'flex-start'}}>
                                 <Typography color='primary' textAlign='start' variant="h5" component="div">
-                                    Teller 1 BCA Mangga dua
+                                    {antrian.name}
                                 </Typography>
                                 <Typography variant="body2" textAlign='start'>
                                     (BANK) - Mangga Dua Block 10E, Jakarta selatan, DKI Jakarta
