@@ -9,6 +9,8 @@ import { Button, Menu, MenuItem, Tooltip } from '@mui/material';
 import { More } from '@mui/icons-material';
 import Link from 'next/link';
 import STATUS_ANTRIAN from '../../utils/statusAntrian';
+import Router from 'next/router';
+import COMPANY_LIST from '../../utils/companyTypeList';
 
 const Img = styled('img')({
     margin: 'auto',
@@ -18,8 +20,10 @@ const Img = styled('img')({
 });
 
 const settings = ['Open', 'Close', 'Delete'];
+
 export default function AntrianCard({antrian}) {
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+    
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
     };
@@ -39,28 +43,21 @@ export default function AntrianCard({antrian}) {
                 <Grid item xs={12} sm container>
                     <Grid item xs container direction="column" spacing={2}>
                         <Grid item xs>
-                            <ButtonBase width='100%' sx={{ paddingRight: '1rem', display: 'flex', flexDirection: 'column', justifyContent: 'left', alignItems:'flex-start'}}>
+                            <ButtonBase onClick={() => Router.push('/antrian/'+antrian.id)} width='100%' sx={{ paddingRight: '1rem', display: 'flex', flexDirection: 'column', justifyContent: 'left', alignItems:'flex-start'}}>
                                 <Typography color='primary' textAlign='start' variant="h5" component="div">
-                                    {antrian.name}
+                                    {antrian.data.name}
                                 </Typography>
                                 <Typography variant="body2" textAlign='start'>
-                                    (BANK) - Mangga Dua Block 10E, Jakarta selatan, DKI Jakarta
+                                    ({COMPANY_LIST[antrian.data.company] || '-'}) - {antrian.data.alamat}
                                 </Typography>
                                 <Typography variant="body2" textAlign='start' color="text.secondary">
-                                    CODE: {antrian.prefixCode || 'ANTRI'}-00XXXX
+                                    CODE: {antrian.data.prefixCode || 'ANTRI'}-00XXXX
                                 </Typography>
                                 <Typography variant="body2" textAlign='start' color="text.secondary">
-                                    STATUS: {STATUS_ANTRIAN[antrian.status] || 'Close'}
+                                    STATUS: {STATUS_ANTRIAN[antrian.data.status] || 'Close'}
                                 </Typography>
                             </ButtonBase>
                         </Grid>
-                        {/* <Grid item>
-                            <Button>
-                                <Typography fontWeight='bold' variant="body2">
-                                    get direction
-                                </Typography>
-                            </Button>
-                        </Grid> */}
                     </Grid>
                     <Grid item>
                         <Tooltip title="Open settings">

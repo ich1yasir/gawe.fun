@@ -5,40 +5,30 @@ import Button from '@mui/material/Button';
 import { ThemeProvider } from '@mui/material';
 import theme from '../../../components/theme';
 import AntrianCard from '../../../components/card/AntrianCard';
+
+import AntrianAppBar from '../../../components/AppBar/AntrianAppBar';
+import {
+    useAuthUser
+} from 'next-firebase-auth'
 import {
     AuthAction,
     withAuthUser,
     withAuthUserTokenSSR,
 } from 'next-firebase-auth'
-import AntrianAppBar from '../../../components/AppBar/AntrianAppBar';
-import { collection, query, where, getDocs, getFirestore  } from "firebase/firestore";
-import {
-    useAuthUser
-} from 'next-firebase-auth'
+import { getListAntrian } from '../../../utils/DLAntrian';
 
 
 const BoardAppBar = () => {
     const AuthUser = useAuthUser()
     const [dataAntrian, setDataAntrian] = React.useState([]);
     const  loadData = () =>  {
-        
-        const db = getFirestore();
-        const q = query(collection(db, "antrian"), where("createdBy", "==", AuthUser.id));
-        console.log(AuthUser.id);
-        getDocs(q).then((querySnapshot)=> {
-            console.log(querySnapshot)
-            var snapshotAntrian = []
-            querySnapshot.forEach((doc) => {
-                // doc.data() is never undefined for query doc snapshots
-                console.log(doc.id, " => ", doc.data());
-                snapshotAntrian.push(doc.data())
-            });
-            setDataAntrian(snapshotAntrian)
+        getListAntrian(AuthUser.id).then((listAntrian) => {
+            setDataAntrian(listAntrian)
         });
     }
 
-    const ListCardAntrian = ({ antrian, key }) => {
-        return (<Grid item xs={12} sm={12} md={6} key={key}>
+    const ListCardAntrian = ({ antrian }) => {
+        return (<Grid item xs={12} sm={12} md={6} key={antrian.id}>
             <AntrianCard antrian={antrian}/>
         </Grid>)
     }
@@ -53,9 +43,8 @@ const BoardAppBar = () => {
             <Container maxWidth='xl' sx={{ padding: '1rem' }}>
                 <Grid container spacing={2} >
                     {dataAntrian && dataAntrian.map(function (antrian, i) {
-                        return <ListCardAntrian antrian={antrian} key={i}/>
+                        return <ListCardAntrian antrian={antrian} key={antrian.id}/>
                     })}
-                    
                     <Grid item xs={12}>
                         <Button>
                             Load More

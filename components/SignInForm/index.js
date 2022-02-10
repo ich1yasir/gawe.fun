@@ -25,8 +25,8 @@ export default function SignInForm() {
         <Box
             sx={{
                 marginTop: '3rem',
-                display: 'flex',
                 maxWidth: '25rem',
+                display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 marginX: 'auto'
