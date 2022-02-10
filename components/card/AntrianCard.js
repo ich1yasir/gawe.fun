@@ -8,6 +8,7 @@ import ButtonBase from '@mui/material/ButtonBase';
 import { Button, Menu, MenuItem, Tooltip } from '@mui/material';
 import { More } from '@mui/icons-material';
 import Link from 'next/link';
+import STATUS_ANTRIAN from '../../utils/statusAntrian';
 
 const Img = styled('img')({
     margin: 'auto',
@@ -46,10 +47,10 @@ export default function AntrianCard({antrian}) {
                                     (BANK) - Mangga Dua Block 10E, Jakarta selatan, DKI Jakarta
                                 </Typography>
                                 <Typography variant="body2" textAlign='start' color="text.secondary">
-                                    CODE: TBCA0000XX
+                                    CODE: {antrian.prefixCode || 'ANTRI'}-00XXXX
                                 </Typography>
                                 <Typography variant="body2" textAlign='start' color="text.secondary">
-                                    STATUS: Close
+                                    STATUS: {STATUS_ANTRIAN[antrian.status] || 'Close'}
                                 </Typography>
                             </ButtonBase>
                         </Grid>
