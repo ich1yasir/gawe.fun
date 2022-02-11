@@ -9,13 +9,15 @@ import {
     withAuthUser,
     withAuthUserTokenSSR,
 } from 'next-firebase-auth'
-import { ButtonBase, Paper, ThemeProvider, Tooltip, Typography } from '@mui/material';
+import { Box, Button, ButtonBase, ButtonGroup, Paper, ThemeProvider, Tooltip, Typography } from '@mui/material';
 import theme from '../../components/theme';
-import { getAntrian, getAntrianSubcribtion } from '../../utils/DLAntrian';
+import { getAntrian, getAntrianSubcribtion, openAntrian, closeAntrian } from '../../utils/DLAntrian';
 import COMPANY_LIST from '../../utils/companyTypeList';
 import STATUS_ANTRIAN from '../../utils/statusAntrian';
 import InputAntrianForm from '../../components/Form/InputAntrianForm';
 import LoaderAntrian from '../../components/loader';
+import QRCode from 'react-qr-code';
+import TransferCard from '../../components/TransferCard';
 const Img = styled('img')({
     margin: 'auto',
     display: 'block',
@@ -37,6 +39,15 @@ const Antrian = () => {
             unSub = unsub
         })
     }
+
+    const openAction = () => {
+        openAntrian(aid)
+    }
+
+    const closeAction = () => {
+        closeAntrian(aid)
+    }
+
 
     React.useEffect(() => {
         console.log("subscribe: ", aid);
@@ -64,35 +75,71 @@ const Antrian = () => {
                         <Grid container spacing={2}>
                             <Grid item>
                                 <ButtonBase sx={{ width: 300 }}>
-                                    <Img alt="complex" src="/ticket-icon.svg" />
+                                    {dataAntrian.accessCode ?
+                                        <QRCode value={dataAntrian.accessCode} size={300}></QRCode>
+                                        :
+                                        <Img alt="complex" src="/ticket-icon.svg" />}
                                 </ButtonBase>
                             </Grid>
                             <Grid item xs={12} sm container>
                                 <Grid item xs container direction="column" spacing={2}>
                                     <Grid item xs sx={{ paddingRight: '1rem', display: 'flex', flexDirection: 'column', justifyContent: 'left', alignItems: 'flex-start' }}>
-                                        {dataAntrian.name &&
-                                            <InputAntrianForm
-                                                VAL={dataAntrian.name}
-                                                ID='name'
-                                                LAB='Name'
-                                                MAP='name'
-                                                AID={aid}
-                                                REQ={true} />}
-                                        <Typography variant="body2" textAlign='start'>
-                                            ({COMPANY_LIST[dataAntrian.company] || '-'}) - {dataAntrian.alamat}
-                                        </Typography>
+                                        <InputAntrianForm
+                                            TYPE={0}
+                                            VAL={dataAntrian.name}
+                                            ID='name'
+                                            LAB='Name'
+                                            MAP='name'
+                                            AID={aid}
+                                            REQ={true} />
+                                        <InputAntrianForm
+                                            TYPE={0}
+                                            VAL={dataAntrian.prefixCode}
+                                            ID='prefixCode'
+                                            LAB='Prefix Code'
+                                            MAP='prefixCode'
+                                            AID={aid}
+                                            REQ={true} />
                                         <Typography variant="body2" textAlign='start' color="text.secondary">
                                             CODE: {dataAntrian.prefixCode || 'ANTRI'}-00XXXX
                                         </Typography>
+
+                                        <InputAntrianForm
+                                            TYPE={1}
+                                            VAL={dataAntrian.company}
+                                            ID='company'
+                                            LAB='Company'
+                                            MAP='company'
+                                            AID={aid}
+                                            REQ={true}
+                                            OPTIONS={COMPANY_LIST} />
+
                                         <Typography variant="body2" textAlign='start' color="text.secondary">
                                             STATUS: {STATUS_ANTRIAN[dataAntrian.status] || 'Close'}
                                         </Typography>
+                                        <Typography variant="body2" textAlign='start' color="text.secondary">
+                                            Access Code : {dataAntrian.accessCode}
+                                        </Typography>
+
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                flexDirection: 'row',
+                                                alignItems: 'center',
+                                                marginY: '1rem'
+                                            }}
+                                        >
+                                            {
+                                                dataAntrian.status == 1 ? <Button onClick={closeAction} variant="outlined">CLOSE ANTRIAN</Button> :
+                                                    <Button onClick={openAction} variant="outlined">OPEN ANTRIAN</Button>
+                                            }
+                                        </Box>
                                     </Grid>
-                                </Grid>
-                                <Grid item>
                                 </Grid>
                             </Grid>
                         </Grid>
+
+                        <TransferCard/>
                     </Paper>
                 </Container>
 

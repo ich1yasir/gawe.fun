@@ -7,7 +7,6 @@
 // <MenuItem value={60}>Workshop</MenuItem>
 // <MenuItem value={70}>Healthcare</MenuItem>
 const COMPANY_LIST = {
-    null: "unknowe",
     10: "Banking",
     20: "Finance",
     30: "Retail",

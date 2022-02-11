@@ -1,5 +1,6 @@
 
 import { collection, updateDoc, serverTimestamp, query, where, getDocs, getFirestore, doc, getDoc, onSnapshot } from "firebase/firestore";
+import guid from "guid";
 
 async function getListAntrian(uid) {
     const db = getFirestore();
@@ -49,8 +50,40 @@ async function updateAntrian(aid, map, value) {
     await updateDoc(docRef, updateDict);
 }
 
+async function openAntrian(aid) {
+    const db = getFirestore();
+    
+    const docRef = doc(db, "antrian", aid);
 
+    var updateDict = {
+        status: 1,
+        accessCode: guid.create().value,
+        progress: {
+            waitingList: [],
+            passedList: [],
+            active: [],
+            number: 1,
+        },
+        startedTime: serverTimestamp(),
+        updateTime: serverTimestamp()
+    }
+    // Update the timestamp field with the value from the server
+    await updateDoc(docRef, updateDict);
+}
 
+async function closeAntrian(aid) {
+    const db = getFirestore();
+    
+    const docRef = doc(db, "antrian", aid);
 
+    var updateDict = {
+        status: 0,
+        accessCode: null,
+        stopedTime: serverTimestamp(),
+        updateTime: serverTimestamp()
+    }
+    // Update the timestamp field with the value from the server
+    await updateDoc(docRef, updateDict);
+}
 
-export { getListAntrian, getAntrian, getAntrianSubcribtion, updateAntrian }
+export { getListAntrian, getAntrian, getAntrianSubcribtion, updateAntrian, openAntrian, closeAntrian }
