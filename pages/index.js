@@ -1,8 +1,5 @@
 import Head from 'next/head'
-import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import { useState, useEffect } from 'react';
-import { GpsFixed } from '@mui/icons-material';
 import Link from 'next/link';
 import BackgroundHome from '../components/background/home';
 

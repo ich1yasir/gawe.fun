@@ -9,6 +9,7 @@ import StepperCreateAntrian from '../../components/StepperCreateAntrian';
 import BackgroundAntrian from '../../components/background/antrian';
 
 import { AuthAction, withAuthUser } from 'next-firebase-auth';
+import LoaderAntrian from '../../components/loader';
 
 function IndexAntrian() {
     return (
@@ -41,4 +42,5 @@ export default withAuthUser({
     whenAuthed: AuthAction.REDIRECT_TO_APP,
     whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
     whenUnauthedAfterInit: AuthAction.RENDER,
+    LoaderComponent: LoaderAntrian,
 })(IndexAntrian)

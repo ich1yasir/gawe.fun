@@ -1,47 +1,44 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Stepper from '@mui/material/Stepper';
-import Step from '@mui/material/Step';
-import Router from "next/router";
-import StepLabel from '@mui/material/StepLabel';
-import StepContent from '@mui/material/StepContent';
-import firebase from 'firebase/compat/app';
-import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import { FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField } from '@mui/material';
-import FirebaseAuth from '../FirebaseAuth';
-import { getFirestore, collection, addDoc } from "firebase/firestore";
-import { grey } from '@mui/material/colors';
+import { TextField } from '@mui/material';
+import { updateAntrian } from '../../utils/DLAntrian';
+
 
 function InputAntrianForm(props) {
-
-    const { VAL, ID, LAB } = props;
+    const { VAL, ID, LAB, MAP, AID, REQ=false } = props;
     const [valueForm, setValueForm] = React.useState('');
     const [modeEditForm, setModeEdit] = React.useState(false);
     const [error, setError] = React.useState({});
-    const validateForm = () => {
-        var error_ = {}
-        if (valueForm === '') {
-            error_[ID] = ID + " is Required."
-            setError(error_)
-            return false
-        }
-        setError(error_)
-        return true
+
+    const updateFirestore = () => {
+        updateAntrian(AID, MAP, valueForm)
     }
 
+    const validateForm = () => {
+        var error_ = {}
+        var isValid = true
+        if (REQ && valueForm === '') {
+            error_[ID] = ID + " is Required."
+            setError(error_)
+            isValid = false
+        }
+        setError(error_)
+        if (isValid) {
+            updateFirestore()
+        }
+        return isValid
+    }
     React.useEffect(() => {
         setValueForm(VAL)
-    }, []);
+    }, [VAL]);
 
 
     return (
-        <Box sx={{ maxWidth: "50rem", marginTop: '1rem', padding: '1rem', backgroundColor: 'rgba(255,255,255, 0.9)' }} width={{ xs: '90%', sm: '90%', md: '40rem' }}>
+        <Box sx={{ maxWidth: "50rem", backgroundColor: 'rgba(255,255,255, 0.9)' }} width={{ xs: '90%', sm: '90%', md: '40rem' }}>
             <TextField
                 fullWidth
                 id={ID}
-                label={LAB}
+                label={LAB+ (REQ ? '*': '')}
                 variant="standard"
                 sx={{ marginY: '0.5rem' }}
                 value={valueForm}

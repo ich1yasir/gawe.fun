@@ -36,7 +36,7 @@ export default function AntrianCard({antrian}) {
         }} elevation={5}>
             <Grid container spacing={2}>
                 <Grid item>
-                    <ButtonBase sx={{ width: 100, height: 100 }}>
+                    <ButtonBase onClick={() => Router.push('/antrian/'+antrian.id)} sx={{ width: 100, height: 100 }}>
                         <Img alt="complex" src="/ticket-icon.svg" />
                     </ButtonBase>
                 </Grid>
