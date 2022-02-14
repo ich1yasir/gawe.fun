@@ -34,7 +34,7 @@ function InputAntrianForm(props) {
 
 
     return (
-        <Box sx={{ maxWidth: "50rem", backgroundColor: 'rgba(255,255,255, 0.9)' }} width={{ xs: '90%', sm: '90%', md: '40rem' }}>
+        <Box sx={{ backgroundColor: 'rgba(255,255,255, 0.9)' }}>
             {
                 (TYPE == 1 || OPTIONS) &&
                 <FormControl fullWidth 

@@ -13,6 +13,7 @@ import { FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, Te
 import FirebaseAuth from '../FirebaseAuth';
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { grey } from '@mui/material/colors';
+import { insertToFirestore } from '../../utils/DLAntrian';
 
 function StepperCreateAntrian({ userInfo = null }) {
     const [activeStep, setActiveStep] = React.useState(0);
@@ -37,25 +38,22 @@ function StepperCreateAntrian({ userInfo = null }) {
     const [error, setError] = React.useState({});
 
     const saveToFirestore = (uid, isStart = false) => {
-        const db = getFirestore()
-        try {
-            const docRef = addDoc(collection(db, "antrian"), {
-                name: name,
-                company: company,
-                numOfLine: numOfLine,
-                numOfDay: numOfDay,
-                publicAccess: publicAccess,
-                prefixCode: prefixCode,
-                createdBy: uid,
-                status: isStart ? 0 : 1 // 0 : Stoped,  1: Started
-            });
+        const dataSave = {
+            name: name,
+            company: company,
+            numOfLine: numOfLine,
+            numOfDay: numOfDay,
+            publicAccess: publicAccess,
+            prefixCode: prefixCode,
+            createdBy: uid,
+            status: isStart ? 0 : 1 // 0 : Stoped,  1: Started
+        }
+        insertToFirestore(uid, dataSave, isStart).then((id) => {
             console.log("Document written with ID: ", docRef.id);
             Router.push({
                 pathname: "/antrian/board"
             })
-        } catch (e) {
-            console.error("Error adding document: ", e);
-        }
+        })
     }
 
     var firebaseAuthConfig = {
