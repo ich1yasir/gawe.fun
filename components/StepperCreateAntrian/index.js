@@ -46,10 +46,9 @@ function StepperCreateAntrian({ userInfo = null }) {
             publicAccess: publicAccess,
             prefixCode: prefixCode,
             createdBy: uid,
-            status: isStart ? 0 : 1 // 0 : Stoped,  1: Started
+            status: isStart ? 1 : 0 // 0 : Stoped,  1: Started
         }
         insertToFirestore(uid, dataSave, isStart).then((id) => {
-            console.log("Document written with ID: ", docRef.id);
             Router.push({
                 pathname: "/antrian/board"
             })

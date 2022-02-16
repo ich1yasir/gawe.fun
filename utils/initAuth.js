@@ -79,6 +79,10 @@ const initAuth = () => {
       authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
       databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
       projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+      storageBucket: "essential-vim-339011.appspot.com",
+      messagingSenderId: "981738024922",
+      appId: "1:981738024922:web:00daa8bdf2ae72cfe55ae3",
+      measurementId: "G-VT6C7CTHN6"
     },
     cookies: {
       name: 'antrian.gawe.fun',

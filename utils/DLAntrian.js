@@ -35,6 +35,9 @@ async function getListAntrian(uid) {
 }
 
 async function insertToFirestore(uid, data, isStart = false) {
+    if (isStart){
+        data['accessCode'] = guid.create().value
+    }
     const db = getFirestore()
     const docRef = await addDoc(collection(db, "antrian"), data);
     return docRef.id;
@@ -79,12 +82,6 @@ async function openAntrian(aid) {
     var updateDict = {
         status: 1,
         accessCode: guid.create().value,
-        progress: {
-            waitingList: [],
-            passedList: [],
-            active: [],
-            number: 1,
-        },
         startedTime: serverTimestamp(),
         updateTime: serverTimestamp()
     }

@@ -126,6 +126,14 @@ const Antrian = () => {
                                             REQ={true} />
                                         <InputAntrianForm
                                             TYPE={0}
+                                            VAL={dataAntrian.address}
+                                            ID='address'
+                                            LAB='Alamat'
+                                            MAP='address'
+                                            AID={aid}
+                                            REQ={true} />
+                                        <InputAntrianForm
+                                            TYPE={0}
                                             VAL={dataAntrian.prefixCode}
                                             ID='prefixCode'
                                             LAB='Prefix Code'
@@ -145,20 +153,18 @@ const Antrian = () => {
                                             AID={aid}
                                             REQ={true}
                                             OPTIONS={COMPANY_LIST} />
+                                            
+                                        <Typography variant="body2" textAlign='start' color="text.secondary">
+                                            STATUS: {STATUS_ANTRIAN[dataAntrian.status] || 'Close'} (AC: {dataAntrian.accessCode})
+                                        </Typography>
 
-                                        <Typography variant="body2" textAlign='start' color="text.secondary">
-                                            STATUS: {STATUS_ANTRIAN[dataAntrian.status] || 'Close'}
-                                        </Typography>
-                                        <Typography variant="body2" textAlign='start' color="text.secondary">
-                                            Access Code : {dataAntrian.accessCode}
-                                        </Typography>
 
                                     </Grid>
                                 </Grid>
                             </Grid>
 
                             <Grid item xs={12} sm={12} md={3}>
-                                {waitingList && <ActiveCard items={waitingList} title="Active" />}
+                                {activeList && <ActiveCard items={activeList} title="Active" />}
                             </Grid>
 
                         </Grid>
