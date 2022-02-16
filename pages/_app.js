@@ -14,11 +14,14 @@ function MyApp({ Component, pageProps }) {
     setToken();
     async function setToken() {
       try {
-        const messaging = await firebaseCloudMessaging.init();
-        // const messaging = getMessaging();
-        onMessage(messaging, (payload) => {
-          getMessage(payload);
-        });
+        const token = await firebaseCloudMessaging.init();
+        if (token) {
+          const messaging = getMessaging();
+          // const messaging = getMessaging();
+          onMessage(messaging, (payload) => {
+            getMessage(payload);
+          });
+        }
       } catch (error) {
         console.log(error);
       }

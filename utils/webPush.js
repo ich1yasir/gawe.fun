@@ -1,6 +1,6 @@
 import 'firebase/messaging';
 import localforage from 'localforage';
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { getMessaging, getToken } from "firebase/messaging";
 const firebaseCloudMessaging = {
     //checking whether token is available in indexed DB
     tokenInlocalforage: async () => {
@@ -14,7 +14,7 @@ const firebaseCloudMessaging = {
             //if FCM token is already there just return the token
             if (tokenInLocalForage !== null) {
                 console.log('fcm token : ', tokenInLocalForage);
-                return messaging;
+                return tokenInLocalForage;
             }
             //requesting notification permission from browser
             const status = await Notification.requestPermission();
@@ -27,7 +27,7 @@ const firebaseCloudMessaging = {
                         localforage.setItem('fcm_token', token);
                         console.log('fcm token', token);
                         //return the FCM token after saving it
-                        return messaging;
+                        return token;
                     } else {
                       // Show permission request UI
                       console.log('No registration token available. Request permission to generate one.');
