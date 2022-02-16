@@ -45,16 +45,13 @@ const Antrian = () => {
         })
         getWaitingList(aid).then((d) => {
             setWaitingList(d)
-            console.log(d)
         })
         getActiveList(aid).then((d) => {
             setActiveList(d)
-            console.log(d)
         })
 
         getPassedList(aid).then((d) => {
             setPassedList(d)
-            console.log(d)
         })
     }
 
