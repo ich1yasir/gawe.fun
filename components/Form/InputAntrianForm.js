@@ -11,7 +11,9 @@ function InputAntrianForm(props) {
     const [error, setError] = React.useState({});
 
     const updateFirestore = () => {
-        updateAntrian(AID, MAP, valueForm)
+        if (valueForm){
+            updateAntrian(AID, MAP, valueForm)
+        }
     }
 
     const validateForm = () => {

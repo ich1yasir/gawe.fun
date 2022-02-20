@@ -135,7 +135,7 @@ async function getAcccesAntrian(sacc) {
 async function getWaitingList(aid) {
     const db = getFirestore();
     const waitingRef = collection(db, "antrian", aid, "waitingList");
-    const q = query(waitingRef, orderBy("joined", "desc"), limit(4))
+    const q = query(waitingRef, orderBy("joined"), limit(4))
     const querySnapshot = await getDocs(q);
     var snapshotAntrian = []
     querySnapshot.forEach((doc) => {
@@ -148,10 +148,19 @@ async function getWaitingList(aid) {
 
     return snapshotAntrian
 }
+
+async function getWaitingListSubscription(aid, onSnap) {
+    const db = getFirestore();
+    const waitingRef = collection(db, "antrian", aid, "waitingList");
+    const q = query(waitingRef, orderBy("joined"), limit(4))
+    const unsubscribe = onSnapshot(q, onSnap);
+    return unsubscribe
+}
+
 async function getActiveList(aid) {
     const db = getFirestore();
     const waitingRef = collection(db, "antrian", aid, "activeList");
-    const q = query(waitingRef, orderBy("joined", "desc"), limit(4))
+    const q = query(waitingRef, orderBy("joined"), limit(4))
     const querySnapshot = await getDocs(q);
     var snapshotAntrian = []
     querySnapshot.forEach((doc) => {
@@ -168,7 +177,7 @@ async function getActiveList(aid) {
 async function getPassedList(aid) {
     const db = getFirestore();
     const waitingRef = collection(db, "antrian", aid, "passedList");
-    const q = query(waitingRef, orderBy("joined", "desc"), limit(4))
+    const q = query(waitingRef, orderBy("joined"), limit(4))
     const querySnapshot = await getDocs(q);
     var snapshotAntrian = []
     querySnapshot.forEach((doc) => {
@@ -260,5 +269,6 @@ export {
     submitAcccesAntrian,
     getWaitingList,
     getActiveList,
-    getPassedList
+    getPassedList,
+    getWaitingListSubscription
 }

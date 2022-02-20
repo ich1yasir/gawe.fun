@@ -48,7 +48,7 @@ export default function AntrianCard({antrian}) {
                                     {antrian.data.name}
                                 </Typography>
                                 <Typography variant="body2" textAlign='start'>
-                                    ({COMPANY_LIST[antrian.data.company] || '-'}) - {antrian.data.alamat}
+                                    ({COMPANY_LIST[antrian.data.company] || '-'}) - {antrian.data.address}
                                 </Typography>
                                 <Typography variant="body2" textAlign='start' color="text.secondary">
                                     CODE: {antrian.data.prefixCode || 'ANTRI'}-00XXXX
