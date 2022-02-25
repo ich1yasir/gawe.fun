@@ -13,6 +13,7 @@ const firebaseCloudMessaging = {
             const tokenInLocalForage = await this.tokenInlocalforage();
             //if FCM token is already there just return the token
             if (tokenInLocalForage !== null) {
+                console.log('fcm token : ', tokenInLocalForage);
                 return tokenInLocalForage;
             }
             //requesting notification permission from browser

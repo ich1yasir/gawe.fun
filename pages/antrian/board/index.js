@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import { ThemeProvider } from '@mui/material';
 import theme from '../../../components/theme';
 import AntrianCard from '../../../components/card/AntrianCard';
+import { SnackbarProvider } from 'notistack';
 
 import AntrianAppBar from '../../../components/AppBar/AntrianAppBar';
 import {
@@ -16,12 +17,14 @@ import {
     withAuthUserTokenSSR,
 } from 'next-firebase-auth'
 import { getListAntrian } from '../../../utils/DLAntrian';
+import NotificationSnackBar from '../../../components/SnackBar/NotificationSnackBar';
 
 
 const BoardAppBar = () => {
+
     const AuthUser = useAuthUser()
     const [dataAntrian, setDataAntrian] = React.useState([]);
-    const  loadData = () =>  {
+    const loadData = () => {
         getListAntrian(AuthUser.id).then((listAntrian) => {
             setDataAntrian(listAntrian)
         });
@@ -29,7 +32,7 @@ const BoardAppBar = () => {
 
     const ListCardAntrian = ({ antrian }) => {
         return (<Grid item xs={12} sm={12} md={6} key={antrian.id}>
-            <AntrianCard antrian={antrian}/>
+            <AntrianCard antrian={antrian} />
         </Grid>)
     }
 
@@ -39,20 +42,22 @@ const BoardAppBar = () => {
 
     return (
         <ThemeProvider theme={theme}>
-            <AntrianAppBar></AntrianAppBar>
-            <Container maxWidth='xl' sx={{ padding: '1rem' }}>
-                <Grid container spacing={2} >
-                    {dataAntrian && dataAntrian.map(function (antrian, i) {
-                        return <ListCardAntrian antrian={antrian} key={antrian.id}/>
-                    })}
-                    <Grid item xs={12}>
-                        <Button>
-                            Load More
-                        </Button>
+            <SnackbarProvider maxSnack={3}>
+                <AntrianAppBar></AntrianAppBar>
+                <Container maxWidth='xl' sx={{ padding: '1rem' }}>
+                    <Grid container spacing={2} >
+                        {dataAntrian && dataAntrian.map(function (antrian, i) {
+                            return <ListCardAntrian antrian={antrian} key={antrian.id} />
+                        })}
+                        <Grid item xs={12}>
+                            <Button>
+                                Load More
+                            </Button>
+                        </Grid>
                     </Grid>
-                </Grid>
 
-            </Container>
+                </Container>
+            </SnackbarProvider>
         </ThemeProvider>
     );
 };

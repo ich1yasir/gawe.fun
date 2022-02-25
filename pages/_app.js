@@ -7,20 +7,24 @@ import { firebaseCloudMessaging } from '../utils/webPush';
 initAuth()
 
 function MyApp({ Component, pageProps }) {
+  const getMessage = (payload) => {
+    console.log('foreground -----', payload)
+  }
   useEffect(() => {
     setToken();
     async function setToken() {
       try {
         const token = await firebaseCloudMessaging.init();
         if (token) {
-          getMessage();
+          const messaging = getMessaging();
+          // const messaging = getMessaging();
+          onMessage(messaging, (payload) => {
+            getMessage(payload);
+          });
         }
       } catch (error) {
         console.log(error);
       }
-    }
-    function getMessage() {
-      onMessage((message) => console.log('foreground' , message));
     }
   }, []);
   return <Component {...pageProps} />

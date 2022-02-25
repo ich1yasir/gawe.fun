@@ -11,7 +11,7 @@ import {
 } from 'next-firebase-auth'
 import { Box, Button, ButtonBase, ButtonGroup, Paper, ThemeProvider, Tooltip, Typography } from '@mui/material';
 import theme from '../../components/theme';
-import { getAntrian, getAntrianSubcribtion, openAntrian, closeAntrian, getWaitingList, getActiveList, getPassedList } from '../../utils/DLAntrian';
+import { getAntrian, getAntrianSubcribtion, openAntrian, closeAntrian, getWaitingListSubscription, getActiveList, getPassedList } from '../../utils/DLAntrian';
 import COMPANY_LIST from '../../utils/companyTypeList';
 import STATUS_ANTRIAN from '../../utils/statusAntrian';
 import InputAntrianForm from '../../components/Form/InputAntrianForm';
@@ -34,8 +34,28 @@ const Antrian = () => {
     const [activeList, setActiveList] = React.useState(null);
     const [passedList, setPassedList] = React.useState(null);
     var unSub = null;
+    var unSubWaitingList = null;
+    var unSubActiveList = null;
+    var unSubPassedList = null;
 
     const onChangeAntrian = (docSnap) => {
+        setDataAntrian(docSnap.data())
+    }
+    const onChangeWaitingList = (querySnapshot) => {
+        const listWaiting = [];
+        querySnapshot.forEach((doc) => {
+            listWaiting.push({
+                'id': doc.id,
+                'data': doc.data()
+            });
+        });
+        console.log(waitingList)
+        setWaitingList(listWaiting)
+    }
+    const onChangeActiveList = (docSnap) => {
+        setDataAntrian(docSnap.data())
+    }
+    const onChangePassedList = (docSnap) => {
         setDataAntrian(docSnap.data())
     }
 
@@ -43,18 +63,15 @@ const Antrian = () => {
         getAntrianSubcribtion(aid, onChangeAntrian).then((unsub) => {
             unSub = unsub
         })
-        getWaitingList(aid).then((d) => {
-            setWaitingList(d)
-            console.log(d)
+        getWaitingListSubscription(aid, onChangeWaitingList).then((unsub) => {
+            unSubWaitingList = unsub
         })
         getActiveList(aid).then((d) => {
             setActiveList(d)
-            console.log(d)
         })
 
         getPassedList(aid).then((d) => {
             setPassedList(d)
-            console.log(d)
         })
     }
 
