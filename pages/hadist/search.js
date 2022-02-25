@@ -14,7 +14,11 @@ import Container from '@mui/material/Container';
 import Head from 'next/head'
 import axios from 'axios';
 import styles from '../../styles/Home.module.css'
-import { Button, CircularProgress, colors, IconButton, Paper, Icon } from '@mui/material';
+import { Button, CircularProgress, colors, IconButton, Paper, Icon, Fab, Hidden, useMediaQuery } from '@mui/material';
+import { LoginTwoTone } from '@mui/icons-material';
+import { green } from '@mui/material/colors';
+import SpeedDialMain from '../../components/SpeedDialMain'
+import { Box } from '@mui/system';
 
 const CardAyat = ({ ayat }) => {
     return <div className={styles.ayat}>
@@ -63,12 +67,24 @@ const StyledDiv = styled('div')(({ theme }) => ({
     maxWidth: '900px'
 }));
 
+const fabGreenStyle = {
+    color: 'common.white',
+    bgcolor: green[500],
+    '&:hover': {
+        bgcolor: green[600],
+    },
+    position: 'fixed',
+    zIndex: 10001,
+    right: { lg: 32, md: 24, xs: 16 },
+    top: { lg: 3 },
+    bottom: { md: 24, xs: 16 }
+};
+
 const StyledTitle = styled(Typography)(({ theme }) => ({
     color: '#0eac00',
     marginRight: '2rem',
     fontSize: 'xx-large',
     fontWeight: '900'
-
 }));
 
 const preventDefault = f => e => {
@@ -83,6 +99,9 @@ export default function QueryPage(props) {
     const [loadMore, setLoadMore] = useState(false);
     const [page, setPage] = useState(1);
     const key = `AAAAB3NzaC1yc2EAAAADAQABAAAAgQDheV5nY0TIudF7WzZ/a/vZ4HprlIQpsLn8newJcbmG4n7Ki0JekYPALT2gKHo1Vw01uf9FhnTapTBin7aSVJqb3zNMxzYfvw3heAMfH7NsowsupwdoGFfuWhNNxQLOipyn3817kpvOoe9FKkrJbcTlBAra3TFXTjpIBfUJtFS2vw==`
+
+
+
     //http://localhost:3000/api/query?q=wudhu&p=3&
     const router = useRouter()
     const { q } = router.query
@@ -135,13 +154,19 @@ export default function QueryPage(props) {
                 <meta name="description" content="Mencari hukum dan referensi hadist islam" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
+
+            <SpeedDialMain>
+
+            </SpeedDialMain>
             <ElevationScroll {...props}>
                 <StyledAppBar>
                     <Toolbar>
                         <StyledDiv sx={{ display: 'flex', alignItems: 'center' }}>
-                            <StyledTitle>
-                                Hadist
-                            </StyledTitle>
+                            <Box  sx={{ display: { xs: 'none', md: 'block' } }}>
+                                <StyledTitle >
+                                    Hadist
+                                </StyledTitle>
+                            </Box>
                             <StyledForm onSubmit={handleSubmit}>
                                 <Paper
                                     sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}

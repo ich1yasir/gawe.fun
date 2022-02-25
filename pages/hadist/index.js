@@ -1,10 +1,12 @@
 import Head from 'next/head'
 import Router from "next/router";
 import styles from '../../styles/Home.module.css'
-import { Icon, IconButton, InputBase, Paper } from '@mui/material';
+import { Fab, Icon, IconButton, InputBase, Paper } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import LocalLibraryIcon from '@mui/icons-material/LocalLibrary';
 import { useState } from 'react';
+import SpeedDialMain from '../../components/SpeedDialMain'
+
 
 const preventDefault = f => e => {
   e.preventDefault()
@@ -16,10 +18,10 @@ export default function Home() {
   const handleSubmit = preventDefault(() => {
     Router.push({
       pathname: "/hadist/search",
-      query: {q: query.trim()},
+      query: { q: query.trim() },
     })
   })
-  
+
   return (
     <div className={styles.container_hadist}>
       <Head>
@@ -29,6 +31,13 @@ export default function Home() {
       </Head>
 
       <main className={styles.main_hadist}>
+{/* 
+        <Fab color="primary" aria-label="add" sx={fabGreenStyle}>
+          <LoginTwoTone />
+        </Fab> */}
+        <SpeedDialMain>
+
+        </SpeedDialMain>
         <h1 className={styles.title_hadist}>
           Referensi <a>Hadist</a>
         </h1>

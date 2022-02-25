@@ -59,8 +59,8 @@ const initAuth = () => {
       }
       return destURL
     },
-    loginAPIEndpoint: '/api/antrian/login',
-    logoutAPIEndpoint: '/api/antrian/logout',
+    loginAPIEndpoint: '/api/auth/login',
+    logoutAPIEndpoint: '/api/auth/logout',
     firebaseAdminInitConfig: {
       credential: {
         projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,

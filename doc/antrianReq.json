@@ -1,0 +1,18 @@
+{
+    "system": "gawe_fun",
+    "module": "hadist",
+    "data": {
+        "meta": {
+            "db": "gawe_fun_hadist",
+            "table": "tags",
+            "action": "insert",
+            "id": 7,
+            "options": ["insert", "update", "delete"]
+        },
+        "value": {
+            "fid": "1212asdsad12",
+            "tag": "1212121212",
+            "note": "1212121212121"
+        }
+    }
+}
