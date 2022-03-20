@@ -35,10 +35,9 @@ const pages = [
         label: 'Setting',
         directUrl: "/antrian/board"
     }];
-const settings = ['Profile', 'Logout'];
+
 
 const AntrianAppBar = () => {
-    const rt = useRouter()
     const AuthUser = useAuthUser()
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -55,11 +54,18 @@ const AntrianAppBar = () => {
     const handleCloseNavMenu = (url = null) => {
         setAnchorElNav(null);
     };
+    const settings = [
+    { 
+        label: 'Logout',
+        action: () => {
+            AuthUser.signOut()
+        }
+    }];
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
     return (
-        <AppBar position="static">
+        <AppBar position="sticky">
             <Container maxWidth='100hv'>
                 <Toolbar disableGutters>
                     <Box
@@ -187,8 +193,11 @@ const AntrianAppBar = () => {
                             onClose={handleCloseUserMenu}
                         >
                             {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                    <Typography textAlign="center">{setting}</Typography>
+                                <MenuItem key={setting} onClick={() => {
+                                    handleCloseUserMenu()
+                                    setting.action()
+                                }}>
+                                    <Typography textAlign="center">{setting.label}</Typography>
                                 </MenuItem>
                             ))}
                         </Menu>

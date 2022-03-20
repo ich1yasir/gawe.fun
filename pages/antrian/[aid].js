@@ -1,31 +1,49 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
+import Divider from '@mui/material/Divider';
+import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import Toolbar from '@mui/material/Toolbar';
 import { useRouter } from 'next/router'
-import Grid from '@mui/material/Grid';
-import Container from '@mui/material/Container';
 import { styled } from '@mui/material/styles';
-import AntrianAppBar from '../../components/AppBar/AntrianAppBar';
 import {
     AuthAction,
     withAuthUser,
     withAuthUserTokenSSR,
 } from 'next-firebase-auth'
-import { Box, Button, ButtonBase, ButtonGroup, Paper, ThemeProvider, Tooltip, Typography } from '@mui/material';
+import { AppBar, Box, Button, ButtonBase, ThemeProvider, Typography } from '@mui/material';
 import theme from '../../components/theme';
-import { getAntrian, getAntrianSubcribtion, openAntrian, closeAntrian, getWaitingListSubscription, getActiveList, getPassedList } from '../../utils/DLAntrian';
+import { getAntrianSubcribtion, openAntrian, closeAntrian, getWaitingListSubscription, getActiveList, getPassedList } from '../../utils/DLAntrian';
 import COMPANY_LIST from '../../utils/companyTypeList';
 import STATUS_ANTRIAN from '../../utils/statusAntrian';
 import InputAntrianForm from '../../components/Form/InputAntrianForm';
 import LoaderAntrian from '../../components/loader';
 import QRCode from 'react-qr-code';
-import TransferCard from '../../components/TransferCard';
-import ActiveCard from '../../components/TransferCard/ActiveCard';
+import AntrianList from '../../components/AntrianList';
+import CssBaseline from '@mui/material/CssBaseline';
+import { Home } from '@mui/icons-material';
+
+const drawerWidth = 400;
+const qrWidth = drawerWidth - 32;
+
+
+
 const Img = styled('img')({
     margin: 'auto',
     display: 'block',
     maxWidth: '100%',
     maxHeight: '100%',
 });
-const Antrian = () => {
+
+function Antrian(props) {
+    const { window } = props;
+    const [mobileOpen, setMobileOpen] = React.useState(false);
+
+    const handleDrawerToggle = () => {
+        setMobileOpen(!mobileOpen);
+    };
+
     const router = useRouter()
     const [active, setActive] = React.useState([0, 1, 2]);
     const { aid } = router.query
@@ -99,112 +117,170 @@ const Antrian = () => {
     }, []);
 
 
-    return (
-        <ThemeProvider theme={theme}>
-            {dataAntrian ? <>
-                <AntrianAppBar></AntrianAppBar>
-                <Container maxWidth='xl' sx={{ padding: '1rem' }}>
-                    <Paper sx={{
-                        p: 2
-                    }}>
-                        <Grid container spacing={2} marginBottom={2} justifyContent="center" alignItems="center">
-                            <Grid item>
-                                <ButtonBase sx={{ width: 200 }}>
-                                    {dataAntrian.accessCode ?
-                                        <QRCode value={dataAntrian.accessCode} size={200}></QRCode>
-                                        :
-                                        <Img alt="complex" src="/ticket-icon.svg" />}
-                                </ButtonBase>
+    const drawer = (
+        dataAntrian && <Box sx={{p: '1rem'}}>
+            <ButtonBase sx={{ width: qrWidth }}>
+                {dataAntrian.accessCode ?
+                    <QRCode value={dataAntrian.accessCode} size={qrWidth}></QRCode>
+                    :
+                    <Img alt="complex" src="/ticket-icon.svg" />}
+            </ButtonBase>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginY: '1rem'
+                }}
+            >
+                {
+                    dataAntrian.status == 1 ? <Button onClick={closeAction} variant="outlined">CLOSE ANTRIAN</Button> :
+                        <Button onClick={openAction} variant="outlined">OPEN ANTRIAN</Button>
+                }
+            </Box>
 
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                        marginY: '1rem'
-                                    }}
-                                >
-                                    {
-                                        dataAntrian.status == 1 ? <Button onClick={closeAction} variant="outlined">CLOSE ANTRIAN</Button> :
-                                            <Button onClick={openAction} variant="outlined">OPEN ANTRIAN</Button>
-                                    }
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} sm={6} md container>
-                                <Grid item xs container direction="column" spacing={2}>
-                                    <Grid item xs sx={{ paddingRight: '1rem' }}>
-                                        <InputAntrianForm
-                                            TYPE={0}
-                                            VAL={dataAntrian.name}
-                                            ID='name'
-                                            LAB='Name'
-                                            MAP='name'
-                                            AID={aid}
-                                            REQ={true} />
-                                        <InputAntrianForm
-                                            TYPE={0}
-                                            VAL={dataAntrian.address}
-                                            ID='address'
-                                            LAB='Alamat'
-                                            MAP='address'
-                                            AID={aid}
-                                            REQ={true} />
-                                        <InputAntrianForm
-                                            TYPE={0}
-                                            VAL={dataAntrian.prefixCode}
-                                            ID='prefixCode'
-                                            LAB='Prefix Code'
-                                            MAP='prefixCode'
-                                            AID={aid}
-                                            REQ={true} />
-                                        <Typography variant="body2" textAlign='start' color="text.secondary">
-                                            CODE: {dataAntrian.prefixCode || 'ANTRI'}-00XXXX
-                                        </Typography>
+            <Typography variant="body1" textAlign='start' color="text.primary">
+                STATUS: {STATUS_ANTRIAN[dataAntrian.status] || 'Close'} 
+            </Typography>
+            <Typography variant="body2" textAlign='start' color="text.secondary">
+                (AC: {dataAntrian.accessCode})
+            </Typography>
 
-                                        <InputAntrianForm
-                                            TYPE={1}
-                                            VAL={dataAntrian.company}
-                                            ID='company'
-                                            LAB='Company'
-                                            MAP='company'
-                                            AID={aid}
-                                            REQ={true}
-                                            OPTIONS={COMPANY_LIST} />
-                                            
-                                        <Typography variant="body2" textAlign='start' color="text.secondary">
-                                            STATUS: {STATUS_ANTRIAN[dataAntrian.status] || 'Close'} (AC: {dataAntrian.accessCode})
-                                        </Typography>
+            <Divider sx={{marginY: '1rem'}}/>
+            <InputAntrianForm
+                TYPE={0}
+                VAL={dataAntrian.name}
+                ID='name'
+                LAB='Name'
+                MAP='name'
+                AID={aid}
+                REQ={true} />
+            <InputAntrianForm
+                TYPE={0}
+                VAL={dataAntrian.address}
+                ID='address'
+                LAB='Alamat'
+                MAP='address'
+                AID={aid}
+                REQ={true} />
+            <InputAntrianForm
+                TYPE={0}
+                VAL={dataAntrian.prefixCode}
+                ID='prefixCode'
+                LAB='Prefix Code'
+                MAP='prefixCode'
+                AID={aid}
+                REQ={true} />
+            <Typography variant="body2" textAlign='start' color="text.secondary">
+                CODE: {dataAntrian.prefixCode || 'ANTRI'}-00XXXX
+            </Typography>
 
+            <InputAntrianForm
+                TYPE={1}
+                VAL={dataAntrian.company}
+                ID='company'
+                LAB='Company'
+                MAP='company'
+                AID={aid}
+                REQ={true}
+                OPTIONS={COMPANY_LIST} />
 
-                                    </Grid>
-                                </Grid>
-                            </Grid>
+        </Box>
+    );
 
-                            <Grid item xs={12} sm={12} md={3}>
-                                {activeList && <ActiveCard items={activeList} title="Active" />}
-                            </Grid>
+    const container = window !== undefined ? () => window().document.body : undefined;
 
-                        </Grid>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                {waitingList && passedList && <TransferCard waitingList={waitingList} passedList={passedList}  />}
-                                
-                            </Grid>
+    return (<ThemeProvider theme={theme} sx={{ overflow: "hidden" }}>
+        {
+            dataAntrian ?
+            <Box sx={{ display: 'flex' }}>
+                <CssBaseline />
+                <AppBar
+                    position="fixed"
+                    sx={{
+                        width: { md: `calc(100% - ${drawerWidth}px)` },
+                        ml: { md: `${drawerWidth}px` },
+                    }}
+                >
+                    <Toolbar>
+                        <IconButton
+                            color="inherit"
+                            aria-label="open drawer"
+                            edge="start"
+                            onClick={handleDrawerToggle}
+                            sx={{ mr: 2, display: { md: 'none' } }}
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                        <IconButton
+                            color="inherit"
+                            aria-label="open drawer"
+                            edge="start"
+                            onClick={handleDrawerToggle}
+                            sx={{ mr: 2}}>
+                                <Home/>
+                        </IconButton>
+                        <Typography variant="h6" noWrap component="div">
+                            Antrian Management
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+                <Box
+                    component="nav"
+                    sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
+                    aria-label="mailbox folders"
+                >
+                    {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+                    <Drawer
+                        container={container}
+                        variant="temporary"
+                        open={mobileOpen}
+                        onClose={handleDrawerToggle}
+                        ModalProps={{
+                            keepMounted: true, // Better open performance on mobile.
+                        }}
+                        sx={{
+                            display: { xs: 'block', md: 'none' },
+                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                        }}
+                    >
+                        {drawer}
+                    </Drawer>
+                    <Drawer
+                        variant="permanent"
+                        sx={{
+                            display: { xs: 'none', md: 'block' },
+                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                        }}
+                        open
+                    >
+                        {drawer}
+                    </Drawer>
+                </Box>
+                <Box
+                    component="main"
+                    sx={{ flexGrow: 1, p: 1, width: { md: `calc(100% - ${drawerWidth}px)` } }}
+                >
+                    <Toolbar />
+                    <AntrianList items={waitingList}  title={dataAntrian.name} index={1}>
 
-                        </Grid>
-                    </Paper>
-                </Container>
-
-            </> :
-                <LoaderAntrian></LoaderAntrian>
-
-            }
-        </ThemeProvider>
+                    </AntrianList>
+                </Box>
+            </Box> 
+            :
+            <LoaderAntrian></LoaderAntrian>
+        }
+    </ThemeProvider>
     );
 }
 
-// export default Antrian
-
+Antrian.propTypes = {
+    /**
+     * Injected by the documentation to work in an iframe.
+     * You won't need it on your project.
+     */
+    window: PropTypes.func,
+};
 
 // Note that this is a higher-order function.
 export const getServerSideProps = withAuthUserTokenSSR()()
@@ -213,3 +289,6 @@ export default withAuthUser({
     authPageURL: '/antrian',
     whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
 })(Antrian)
+
+
+
