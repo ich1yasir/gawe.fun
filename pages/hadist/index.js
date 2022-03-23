@@ -35,9 +35,9 @@ export default function Home() {
         <Fab color="primary" aria-label="add" sx={fabGreenStyle}>
           <LoginTwoTone />
         </Fab> */}
-        <SpeedDialMain>
+        {/* <SpeedDialMain>
 
-        </SpeedDialMain>
+        </SpeedDialMain> */}
         <h1 className={styles.title_hadist}>
           Referensi <a>Hadist</a>
         </h1>
@@ -51,7 +51,7 @@ export default function Home() {
             </Icon>
             <InputBase
               sx={{ ml: 1, flex: 1 }}
-              placeholder="Cari Referensi Tentang: Mendidik anak"
+              placeholder="Cari Referensi Tentang: Menikah beda agama"
               inputProps={{ 'aria-label': 'Cari Referensi tentang' }}
               value={query}
               onChange={e => setQuery(e.target.value)}

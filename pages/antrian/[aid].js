@@ -5,7 +5,7 @@ import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
-import { useRouter } from 'next/router'
+import { Router, useRouter } from 'next/router'
 import { styled } from '@mui/material/styles';
 import {
     AuthAction,
@@ -121,7 +121,7 @@ function Antrian(props) {
         dataAntrian && <Box sx={{p: '1rem'}}>
             <ButtonBase sx={{ width: qrWidth }}>
                 {dataAntrian.accessCode ?
-                    <QRCode value={dataAntrian.accessCode} size={qrWidth}></QRCode>
+                    <QRCode value={`https://gawe.fun/antrian/comm/${aid}${dataAntrian.accessCode}`} size={qrWidth}></QRCode>
                     :
                     <Img alt="complex" src="/ticket-icon.svg" />}
             </ButtonBase>
@@ -216,7 +216,7 @@ function Antrian(props) {
                             color="inherit"
                             aria-label="open drawer"
                             edge="start"
-                            onClick={handleDrawerToggle}
+                            onClick={() => Router.push('/antrian/board')}
                             sx={{ mr: 2}}>
                                 <Home/>
                         </IconButton>

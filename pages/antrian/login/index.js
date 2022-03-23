@@ -11,6 +11,7 @@ import BackgroundAntrian from '../../../components/background/antrian';
 
 import { AuthAction, withAuthUser } from 'next-firebase-auth';
 import FirebaseAuth from '../../../components/FirebaseAuth';
+import LoaderAntrian from '../../../components/loader';
 
 function LoginAntrian() {
     var firebaseAuthConfig = {
@@ -68,4 +69,5 @@ export default withAuthUser({
     whenAuthed: AuthAction.REDIRECT_TO_APP,
     whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
     whenUnauthedAfterInit: AuthAction.RENDER,
+    LoaderComponent: LoaderAntrian,
 })(LoginAntrian)

@@ -20,7 +20,7 @@ export default function Home() {
         </h1>
 
         <p className={styles.description}>
-          <code className={styles.code}>Kumpulan aplikasi sederhana : <Link href='/hadist'><a>Cari Hadist</a></Link>, <a href='#'>Antrian</a>, <a href='#' >Wacana</a></code>
+          <code className={styles.code}>Kumpulan aplikasi sederhana : <Link href='/hadist'><a>Cari Hadist</a></Link>, <Link href='/antrian'><a>Antrian</a></Link>, <a href='#' >Wacana</a></code>
         </p>
 
       </main>

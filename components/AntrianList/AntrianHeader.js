@@ -17,12 +17,12 @@ export default function AntrianHeader() {
                                 ANTR-00001
                             </Typography>
                             <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                                adjective
+                                Coming soon
                             </Typography>
                             <Typography variant="body2">
-                                well meaning and kindly.
+                                please wait with kindly.
                                 <br />
-                                {'"a benevolent smile"'}
+                                {'"and a bit smile"'}
                             </Typography>
                         </CardContent>
                         <CardActions>
@@ -42,15 +42,15 @@ export default function AntrianHeader() {
                     <Card>
                         <CardContent>
                             <Typography variant="h5">
-                                ANTR-00001
+                                ANTR-00002
                             </Typography>
                             <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                                adjective
+                                Coming soon
                             </Typography>
                             <Typography variant="body2">
-                                well meaning and kindly.
+                                please wait with kindly.
                                 <br />
-                                {'"a benevolent smile"'}
+                                {'"and a bit smile"'}
                             </Typography>
                         </CardContent>
                         <CardActions>

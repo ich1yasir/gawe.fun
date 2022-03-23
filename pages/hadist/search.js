@@ -154,10 +154,10 @@ export default function QueryPage(props) {
                 <meta name="description" content="Mencari hukum dan referensi hadist islam" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-
+{/* 
             <SpeedDialMain>
 
-            </SpeedDialMain>
+            </SpeedDialMain> */}
             <ElevationScroll {...props}>
                 <StyledAppBar>
                     <Toolbar>

@@ -18,15 +18,19 @@ import {
 } from 'next-firebase-auth'
 import { getListAntrian } from '../../../utils/DLAntrian';
 import NotificationSnackBar from '../../../components/SnackBar/NotificationSnackBar';
+import LoaderAntrian from '../../../components/loader';
 
 
 const BoardAppBar = () => {
 
     const AuthUser = useAuthUser()
     const [dataAntrian, setDataAntrian] = React.useState([]);
+    const [loadingStep, setLoadingStep] = React.useState(0);
+    const totStep = 1;
     const loadData = () => {
         getListAntrian(AuthUser.id).then((listAntrian) => {
             setDataAntrian(listAntrian)
+            setLoadingStep(loadingStep+1)
         });
     }
 
@@ -42,6 +46,7 @@ const BoardAppBar = () => {
 
     return (
         <ThemeProvider theme={theme}>
+            { loadingStep === totStep ?
             <SnackbarProvider maxSnack={3}>
                 <AntrianAppBar></AntrianAppBar>
                 <Container maxWidth='xl' sx={{ padding: '1rem' }}>
@@ -58,7 +63,11 @@ const BoardAppBar = () => {
 
                 </Container>
             </SnackbarProvider>
+            :
+            <LoaderAntrian></LoaderAntrian>}
         </ThemeProvider>
+        
+        
     );
 };
 
@@ -69,4 +78,6 @@ export const getServerSideProps = withAuthUserTokenSSR()()
 export default withAuthUser({
     authPageURL: '/antrian',
     whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
+    whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
+    LoaderComponent: LoaderAntrian,
 })(BoardAppBar)
