@@ -5,7 +5,7 @@ import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
-import { Router, useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import { styled } from '@mui/material/styles';
 import {
     AuthAction,
@@ -37,6 +37,8 @@ const Img = styled('img')({
 });
 
 function Antrian(props) {
+
+    const router = useRouter()
     const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
@@ -44,7 +46,6 @@ function Antrian(props) {
         setMobileOpen(!mobileOpen);
     };
 
-    const router = useRouter()
     const [active, setActive] = React.useState([0, 1, 2]);
     const { aid } = router.query
     const [dataAntrian, setDataAntrian] = React.useState(null);
@@ -216,7 +217,7 @@ function Antrian(props) {
                             color="inherit"
                             aria-label="open drawer"
                             edge="start"
-                            onClick={() => Router.push('/antrian/board')}
+                            onClick={() => router.push('/antrian/board')}
                             sx={{ mr: 2}}>
                                 <Home/>
                         </IconButton>
