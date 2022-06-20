@@ -17,6 +17,15 @@ import {
 } from "firebase/firestore";
 import guid from "guid";
 
+// Antrian attribute
+// name: name
+// company: company
+// publicAccess: string
+// prefixCode: string
+// createdBy: user.id
+// accessCode: string
+// status: int
+
 async function getListAntrian(uid) {
     const db = getFirestore();
     const q = query(collection(db, "antrian"), where("createdBy", "==", uid));
@@ -31,15 +40,34 @@ async function getListAntrian(uid) {
     });
 
     return snapshotAntrian
+}
+async function getListTicket(uid) {
 
+    const db = getFirestore();
+    const q = query(collection(db, "pengantri"), where("uid", "==", uid));
+    const querySnapshot = await getDocs(q);
+    var snapshotTicket = []
+    querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        snapshotTicket.push({
+            'id': doc.id,
+            'data': doc.data()
+        })
+    });
+    console.log("snapshotTicket")
+
+    console.log(snapshotTicket)
+
+    return snapshotTicket
 }
 
-async function insertToFirestore(uid, data, isStart = false) {
-    if (isStart){
-        data['accessCode'] = guid.create().value
-    }
+async function insertToFirestore(data) {
     const db = getFirestore()
     const docRef = await addDoc(collection(db, "antrian"), data);
+
+    if (data.status == 1){
+        await openAntrian(docRef.id)
+    }
     return docRef.id;
 }
 
@@ -151,8 +179,9 @@ async function getWaitingList(aid) {
 
 async function getWaitingListSubscription(aid, onSnap) {
     const db = getFirestore();
-    const waitingRef = collection(db, "antrian", aid, "waitingList");
-    const q = query(waitingRef, orderBy("joined"), limit(4))
+    const antRef = doc(db, "antrian", aid)
+    const waitingRef = collection(db, "pengantri");
+    const q = query(waitingRef, where('antrian', '==', antRef), limit(5))
     const unsubscribe = onSnapshot(q, onSnap);
     return unsubscribe
 }
@@ -196,63 +225,49 @@ async function submitAcccesAntrian(sacc, prefixCode, displayName, userInfo) {
     const acc = sacc.substring(20);
 
     const db = getFirestore();
-    const antRef = doc(db, "antrian", aid)
-    const clientRef = doc(db, "antrian", aid, "waitingList", userInfo.id)
-    const clientSnap = await getDoc(clientRef);
-    const antSnap = await getDoc(antRef);
+    const antrianRef = doc(db, "antrian", aid)
+
+    const antSnap = await getDoc(antrianRef);
 
     var lastNumber = 1
 
-    const newDataUser = {
-        DisplayName: displayName,
-        photoURL: userInfo.photoURL,
-        uid: userInfo.id,
-        userEmail: userInfo.email,
-        codeAnt: null,
-        joined: serverTimestamp(),
-        status: 0,// manunggu
-        number: lastNumber
-    }
-
-    const postAct = {
+    const postPengantri = {
         uid: userInfo.id,
         displayName: displayName,
+        userEmail: userInfo.email,
+        photoURL: userInfo.photoURL,
         antName: null,
         codeAnt: null,
-        antrian: antRef,
+        joined: serverTimestamp(),
+        antrian: antrianRef,
         status: 0,// manunggu
-        inAList: clientRef,
         sacc: sacc
     };
 
     if (antSnap.exists()) {
         var dTemp = antSnap.data()
-        postAct.antName = dTemp.name
+        postPengantri.antName = dTemp.name
         console.log(dTemp)
         if (dTemp.counter) {
             lastNumber = dTemp.counter.number + 1
         }
-        newDataUser['number'] = lastNumber
     }
 
     const codeRecieved = prefixCode + '-' + ((lastNumber + 10000000) + '').substring(2)
-    newDataUser['codeAnt'] = codeRecieved
-    postAct['codeAnt'] = codeRecieved
+    
+    postPengantri['codeAnt'] = codeRecieved
 
+    // await setDoc(clientRef, newDataUser);
+    await addDoc(collection(db, "pengantri"), postPengantri);
 
-    if (clientSnap.exists()) {
-        return -1
-    }
-
-    await updateDoc(antRef, {
+    await updateDoc(antrianRef, {
         counter: {
             number: lastNumber,
             lastuid: userInfo.id
         }
     });
 
-    await setDoc(clientRef, newDataUser);
-    await addDoc(collection(db, "pengantri"), postAct);
+
     return 0
 }
 
@@ -270,5 +285,6 @@ export {
     getWaitingList,
     getActiveList,
     getPassedList,
-    getWaitingListSubscription
+    getWaitingListSubscription,
+    getListTicket
 }

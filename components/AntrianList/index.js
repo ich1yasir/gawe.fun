@@ -43,8 +43,8 @@ export default function AntrianList({ title, index, items }) {
             <CardHeader
                 sx={{ padding: 1 }}
                 action={
-                    <IconButton aria-label="settings">
-                        <MoreVertIcon />
+                    <IconButton aria-label="share">
+                        <ShareIcon />
                     </IconButton>
                 }
                 title={title}
@@ -54,12 +54,9 @@ export default function AntrianList({ title, index, items }) {
                 <AntrianHeader></AntrianHeader>
             </CardContent>
             <CardActions disableSpacing>
-                <IconButton aria-label="add to favorites">
-                    <FavoriteIcon />
-                </IconButton>
-                <IconButton aria-label="share">
-                    <ShareIcon />
-                </IconButton>
+                    <Typography variant='h6'>
+                        Dalam Antrian
+                    </Typography>
                 <ExpandMore
                     expand={expanded}
                     onClick={handleExpandClick}

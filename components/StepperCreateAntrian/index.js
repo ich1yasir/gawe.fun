@@ -13,15 +13,13 @@ import { FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, Te
 import FirebaseAuth from '../FirebaseAuth';
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { grey } from '@mui/material/colors';
-import { insertToFirestore } from '../../utils/DLAntrian';
+import { insertToFirestore } from '../../utils/datalayer/DLAntrian';
 
 function StepperCreateAntrian({ userInfo = null }) {
     const [activeStep, setActiveStep] = React.useState(0);
     const [company, setCompany] = React.useState(10);
     const [name, setName] = React.useState('');
     const [prefixCode, setPrefixCode] = React.useState('');
-    const [numOfLine, setNumOfLine] = React.useState(1);
-    const [numOfDay, setNumOfDays] = React.useState(1);
     const [publicAccess, setPublicAccess] = React.useState(true);
 
     const getPrefixTemp = (name_) => {
@@ -41,14 +39,13 @@ function StepperCreateAntrian({ userInfo = null }) {
         const dataSave = {
             name: name,
             company: company,
-            numOfLine: numOfLine,
-            numOfDay: numOfDay,
             publicAccess: publicAccess,
             prefixCode: prefixCode,
             createdBy: uid,
-            status: isStart ? 1 : 0 // 0 : Stoped,  1: Started
+            status: isStart ? 1 : 0, // 0 : Stoped,  1: Started
+            accessCode: null,
         }
-        insertToFirestore(uid, dataSave, isStart).then((id) => {
+        insertToFirestore(dataSave).then((id) => {
             Router.push({
                 pathname: "/antrian/board"
             })
@@ -86,16 +83,6 @@ function StepperCreateAntrian({ userInfo = null }) {
         }
         if (activeStep === 1) {
             var _error = {}
-            if (numOfLine <= 0 || numOfLine > 5) {
-                _error["numOfLine"] = "Line should between 1 and 5"
-            }
-            if (numOfDay <= 0 || numOfDay > 7) {
-                _error["numOfDay"] = "Minimum 1 day and maximum 7 days"
-            }
-            if (_error.numOfLine || _error.numOfDay) {
-                setError(_error)
-                return false
-            }
         }
         setError({})
         return true
@@ -177,31 +164,6 @@ function StepperCreateAntrian({ userInfo = null }) {
             description: 'Create as public or private Antrian, how many line.',
             component: (
                 <Box sx={{ maxWidth: '25rem' }}>
-                    <TextField id="antrian-line"
-                        type='Number'
-                        fullWidth
-                        label="Line of Antrian"
-                        variant="outlined"
-                        sx={{ marginY: '0.5rem' }}
-                        value={numOfLine}
-                        error={error.numOfLine}
-                        helperText={error.numOfLine}
-                        onBlur={() => validateForm()}
-                        onChange={(event) => setNumOfLine(event.target.value)} />
-
-                    <TextField
-                        id="antrian-day"
-                        type='Number'
-                        fullWidth
-                        label="Active for (days)"
-                        variant="outlined"
-                        sx={{ marginY: '0.5rem' }}
-                        value={numOfDay}
-                        error={error.numOfDay}
-                        helperText={error.numOfDay}
-                        onBlur={() => validateForm()}
-                        onChange={(event) => setNumOfDays(event.target.value)} />
-
                     <FormControlLabel
                         control={
                             <Switch name="public"

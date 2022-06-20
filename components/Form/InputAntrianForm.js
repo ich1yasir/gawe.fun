@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import { FormControl, Select, TextField, MenuItem, InputLabel } from '@mui/material';
-import { updateAntrian } from '../../utils/DLAntrian';
+import { updateAntrian } from '../../utils/datalayer/DLAntrian';
 
 
 function InputAntrianForm(props) {

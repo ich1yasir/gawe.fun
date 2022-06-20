@@ -18,19 +18,19 @@ export default function AntrianVerticalList({ items }) {
       }}
       subheader={<li />}
     >
-      <ListSubheader>{`Dalam Antrian`}</ListSubheader>
       {items && items.map((item) => (
         <>
-          <ListItem key={`item-${item}`}>
-            <ListItemText 
-            primary={`${item.data.codeAnt} - ${item.data.DisplayName}`} 
-            secondary={`${item.data.userEmail}, 
-            joined at: ${item.data.joined.toDate().getUTCHours()}: 
-            ${item.data.joined.toDate().getUTCMinutes()}`}/>
-          </ListItem>
           <Divider variant="middle" />
+          <ListItem key={`item-${item}`}>
+            <ListItemText
+              primary={`${item.data.codeAnt} - ${item.data.displayName}`}
+              secondary={`${item.data.userEmail}, 
+            joined at: ${item.data.joined.toDate().getUTCHours()}: 
+            ${item.data.joined.toDate().getUTCMinutes()}`} />
+          </ListItem>
         </>
       ))}
+      <Divider variant="middle" />
     </List>
   );
 }

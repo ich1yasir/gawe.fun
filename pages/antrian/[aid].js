@@ -14,7 +14,7 @@ import {
 } from 'next-firebase-auth'
 import { AppBar, Box, Button, ButtonBase, ThemeProvider, Typography } from '@mui/material';
 import theme from '../../components/theme';
-import { getAntrianSubcribtion, openAntrian, closeAntrian, getWaitingListSubscription, getActiveList, getPassedList } from '../../utils/DLAntrian';
+import { getAntrianSubcribtion, openAntrian, closeAntrian, getWaitingListSubscription, getActiveList, getPassedList } from '../../utils/datalayer/DLAntrian';
 import COMPANY_LIST from '../../utils/companyTypeList';
 import STATUS_ANTRIAN from '../../utils/statusAntrian';
 import InputAntrianForm from '../../components/Form/InputAntrianForm';
@@ -124,7 +124,7 @@ function Antrian(props) {
                 {dataAntrian.accessCode ?
                     <QRCode value={`https://gawe.fun/antrian/comm/${aid}${dataAntrian.accessCode}`} size={qrWidth}></QRCode>
                     :
-                    <Img alt="complex" src="/ticket-icon.svg" />}
+                    <Img alt="complex" src="/close_status.png" />}
             </ButtonBase>
             <Box
                 sx={{

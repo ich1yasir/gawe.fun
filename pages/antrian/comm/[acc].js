@@ -12,7 +12,7 @@ import BackgroundAntrian from '../../../components/background/antrian';
 
 import FirebaseAuth from '../../../components/FirebaseAuth';
 import LoaderAntrian from '../../../components/loader';
-import { getAcccesAntrian, submitAcccesAntrian } from '../../../utils/DLAntrian'; import {
+import { getAcccesAntrian, submitAcccesAntrian } from '../../../utils/datalayer/DLAntrian'; import {
     useAuthUser
 } from 'next-firebase-auth'
 import {
@@ -20,7 +20,7 @@ import {
     withAuthUser,
     withAuthUserTokenSSR,
 } from 'next-firebase-auth'
-import { getListAntrian } from '../../../utils/DLAntrian';
+import { getListAntrian } from '../../../utils/datalayer/DLAntrian';
 
 function LoginAccAntrian() {
     const AuthUser = useAuthUser()

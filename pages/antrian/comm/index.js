@@ -15,7 +15,7 @@ import {
     withAuthUser,
     withAuthUserTokenSSR,
 } from 'next-firebase-auth'
-import { getListAntrian } from '../../../utils/DLAntrian';
+import { getListAntrian } from '../../../utils/datalayer/DLAntrian';
 
 
 const BoardCommDash = () => {
