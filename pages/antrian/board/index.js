@@ -2,7 +2,7 @@ import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
-import { ThemeProvider } from '@mui/material';
+import { Divider, ThemeProvider } from '@mui/material';
 import theme from '../../../components/theme';
 import AntrianCard from '../../../components/card/AntrianCard';
 import { SnackbarProvider } from 'notistack';
@@ -22,24 +22,41 @@ import LoaderAntrian from '../../../components/loader';
 import TicketCard from '../../../components/card/TicketCard';
 
 
+var lastVisible = null
+
 const BoardAppBar = () => {
 
     const AuthUser = useAuthUser()
     const [dataAntrian, setDataAntrian] = React.useState([]);
     const [dataTicket, setDataTicket] = React.useState([]);
+    const [lastVisible, setLastVissible] = React.useState(null);
     const [loadingAntrian, setLoadingAntrian] = React.useState(true);
     const [loadingTicket, setLoadingTicket] = React.useState(true);
     const totStep = 2;
     const loadData = () => {
-        getListAntrian(AuthUser.id).then((items) => {
-            console.log("antriiiiaan")
-            setDataAntrian(items)
+        getListAntrian(AuthUser.id, lastVisible).then((items) => {
+            setDataAntrian(items.snap)
+            console.log(items.last)
+            console.log("--------------------- l")
+            setLastVissible(items.last)
             setLoadingAntrian(false)
         });
         getListTicket(AuthUser.id).then((items) => {
-            console.log("tickeeet")
             setDataTicket(items)
             setLoadingTicket(false)
+        });
+    }
+    
+    const loadMore = () => {
+        setLoadingAntrian(true)
+        getListAntrian(AuthUser.id).then((items) => {
+            if (items.snap.length > 0){
+                console.log(items.last)
+                console.log("--------------------- l2")
+                setDataAntrian([...dataAntrian, ...items.snap])
+                setLastVissible(items.last)
+            }
+            setLoadingAntrian(false)
         });
     }
 
@@ -70,14 +87,19 @@ const BoardAppBar = () => {
                             {dataTicket && dataTicket.map(function (ticket, i) {
                                 return <ListCardTicket ticket={ticket} key={ticket.id} />
                             })}
+                        </Grid>
+
+                        <Divider sx={{ m: 2 }} />
+                        <Grid container spacing={2} >
                             {dataAntrian && dataAntrian.map(function (antrian, i) {
                                 return <ListCardAntrian antrian={antrian} key={antrian.id} />
                             })}
-                            <Grid item xs={12}>
-                                <Button>
+                            {dataAntrian && <Grid item xs={12}>
+                                <Button onClick={loadMore}>
                                     Load More
                                 </Button>
-                            </Grid>
+                            </Grid>}
+
                         </Grid>
 
                     </Container>

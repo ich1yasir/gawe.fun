@@ -13,7 +13,8 @@ import {
     setDoc,
     addDoc,
     orderBy,
-    limit
+    limit,
+    startAfter
 } from "firebase/firestore";
 import guid from "guid";
 
@@ -25,12 +26,18 @@ import guid from "guid";
 // createdBy: user.id
 // accessCode: string
 // status: int
+var limitList = 6
 
-async function getListAntrian(uid) {
+async function getListAntrian(uid, lastVisible) {
+    console.log(lastVisible)
     const db = getFirestore();
-    const q = query(collection(db, "antrian"), where("createdBy", "==", uid));
+    const q = lastVisible ? 
+        query(collection(db, "antrian"), where("createdBy", "==", uid), orderBy("createdDate", 'desc'), startAfter(lastVisible), limit(limitList)) :
+        query(collection(db, "antrian"), where("createdBy", "==", uid), orderBy("createdDate", 'desc'), limit(limitList));
     const querySnapshot = await getDocs(q);
     var snapshotAntrian = []
+    const last = querySnapshot.docs[querySnapshot.docs.length-1];
+
     querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
         snapshotAntrian.push({
@@ -39,12 +46,16 @@ async function getListAntrian(uid) {
         })
     });
 
-    return snapshotAntrian
+    return {
+        snap: snapshotAntrian, 
+        last: last
+    }
 }
 async function getListTicket(uid) {
 
     const db = getFirestore();
-    const q = query(collection(db, "pengantri"), where("uid", "==", uid));
+    
+    const q = query(collection(db, "pengantri"), where("uid", "==", uid),  orderBy("createdDate", 'desc'));
     const querySnapshot = await getDocs(q);
     var snapshotTicket = []
     querySnapshot.forEach((doc) => {

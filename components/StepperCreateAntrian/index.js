@@ -11,7 +11,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField } from '@mui/material';
 import FirebaseAuth from '../FirebaseAuth';
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { grey } from '@mui/material/colors';
 import { insertToFirestore } from '../../utils/datalayer/DLAntrian';
 
@@ -42,6 +42,7 @@ function StepperCreateAntrian({ userInfo = null }) {
             publicAccess: publicAccess,
             prefixCode: prefixCode,
             createdBy: uid,
+            createdDate: serverTimestamp(),
             status: isStart ? 1 : 0, // 0 : Stoped,  1: Started
             accessCode: null,
         }
