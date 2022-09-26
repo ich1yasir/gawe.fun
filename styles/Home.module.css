@@ -113,7 +113,7 @@
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  padding: 1rem;
+  padding: 0rem 0rem;
 }
 
 .grid_hadist {
@@ -163,7 +163,7 @@
 
 
 .ayat {
-  margin: 0 0 0 0;
+  padding: 0.5rem 1rem 1rem 1rem;
 }
 
 .ayat .kitab {

@@ -31,13 +31,6 @@ export default function Home() {
       </Head>
 
       <main className={styles.main_hadist}>
-{/* 
-        <Fab color="primary" aria-label="add" sx={fabGreenStyle}>
-          <LoginTwoTone />
-        </Fab> */}
-        {/* <SpeedDialMain>
-
-        </SpeedDialMain> */}
         <h1 className={styles.title_hadist}>
           Referensi <a>Hadist</a>
         </h1>
