@@ -10,10 +10,10 @@ import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
 import { Egg } from '@mui/icons-material';
 import { Divider, Drawer, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 import { VariableDrawerWidth, VariablePages, VariableUserSettings } from '../../../utils/variableGlobal';
+import Link from 'next/link';
 
 
 const namaUsaha = "USAHA";
@@ -50,11 +50,21 @@ const UsahaAppBar = (props) => {
             <Divider />
             <List>
                 {pages.map((item) => (
-                    <ListItem key={item} disablePadding>
-                        <ListItemButton sx={{ textAlign: 'center' }}>
-                            <ListItemText primary={item} />
-                        </ListItemButton>
-                    </ListItem>
+                    <div key={item.label}>
+                        <ListItem key={item.label} disablePadding>
+                            <ListItemButton sx={{ textAlign: 'center' }}>
+                                <Link href={item.url}>
+                                    <a>
+
+                                        <ListItemText primary={item.label} />
+                                    </a>
+                                </Link>
+                            </ListItemButton>
+                        </ListItem>
+
+                        <Divider variant="middle" component="li" />
+                    </div>
+
                 ))}
             </List>
         </Box>
