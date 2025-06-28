@@ -1,14 +1,14 @@
 'use client'
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Note } from "../../models/Note";
 import NoteCard from "./NoteCard";
 import AddNoteModal from "./AddNoteModal";
 import NoteInput from "./NoteInput";
 import SearchInput from "./SearchInput";
-import initialNotes from "../../models/data/initialNotes";
+import { NoteStore } from "../../models/store/NoteStore";
 
 const Dashboard: React.FC = () => {
-    const [notes, setNotes] = useState<Note[]>(initialNotes);
+    const [notes, setNotes] = useState<Note[]>([]);
     const [inputValue, setInputValue] = useState("");
     const [modalOpen, setModalOpen] = useState(false);
     const [modalTitle, setModalTitle] = useState("");
@@ -18,6 +18,20 @@ const Dashboard: React.FC = () => {
     const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
     const [search, setSearch] = useState("");
     const inputRef = useRef<HTMLInputElement>(null);
+
+    // Load notes from NoteStore (filtered)
+    useEffect(() => {
+        if (search.trim()) {
+            // Filter by title or content
+            const filtered = NoteStore.filter({
+                // title: search,
+                content: search
+            }, 1, 100);
+            setNotes(filtered);
+        } else {
+            setNotes(NoteStore.getAll());
+        }
+    }, [search, modalOpen]);
 
     const handleInputFocus = () => {
         setModalTitle(inputValue);
@@ -34,53 +48,41 @@ const Dashboard: React.FC = () => {
         setEditingNoteId(null);
     };
 
-    // Add or update note: if note with same title exists, update its data (content, date, label), else add new note
+    // Add or update note using NoteStore
     const addOrUpdateNote = () => {
         if (modalTitle.trim() && modalContent.trim()) {
             if (editingNoteId !== null) {
                 // Update existing note by id
-                setNotes(notes =>
-                    notes.map(note =>
-                        note.id === editingNoteId
-                            ? {
-                                ...note,
-                                title: modalTitle.trim(),
-                                content: modalContent.trim(),
-                                date: modalDate,
-                                label: modalLabel,
-                            }
-                            : note
-                    )
-                );
+                const note: Note = {
+                    id: editingNoteId,
+                    title: modalTitle.trim(),
+                    content: modalContent.trim(),
+                    date: modalDate,
+                    label: modalLabel,
+                };
+                NoteStore.update(note);
             } else {
                 // Check if note with same title exists
                 const existing = notes.find(note => note.title.trim() === modalTitle.trim());
                 if (existing) {
                     // Update existing note's data (content, date, label)
-                    setNotes(notes =>
-                        notes.map(note =>
-                            note.title.trim() === modalTitle.trim()
-                                ? {
-                                    ...note,
-                                    content: modalContent.trim(),
-                                    date: modalDate,
-                                    label: modalLabel,
-                                }
-                                : note
-                        )
-                    );
+                    const updatedNote: Note = {
+                        ...existing,
+                        content: modalContent.trim(),
+                        date: modalDate,
+                        label: modalLabel,
+                    };
+                    NoteStore.update(updatedNote);
                 } else {
                     // Add new note
-                    setNotes([
-                        ...notes,
-                        {
-                            id: Date.now(),
-                            title: modalTitle.trim(),
-                            content: modalContent.trim(),
-                            date: modalDate,
-                            label: modalLabel,
-                        },
-                    ]);
+                    const newNote: Note = {
+                        id: Date.now(),
+                        title: modalTitle.trim(),
+                        content: modalContent.trim(),
+                        date: modalDate,
+                        label: modalLabel,
+                    };
+                    NoteStore.insert(newNote);
                 }
             }
             setModalTitle("");
@@ -103,12 +105,11 @@ const Dashboard: React.FC = () => {
         setModalOpen(true);
     };
 
-    // Filter notes by search
-    const filteredNotes = notes.filter(
-        note =>
-            note.title.toLowerCase().includes(search.toLowerCase()) ||
-            note.content.toLowerCase().includes(search.toLowerCase())
-    );
+    // Optionally, add a delete handler if you want to support deleting notes
+    const handleDeleteNote = (id: number) => {
+        NoteStore.delete(id);
+        setNotes(NoteStore.getAll());
+    };
 
     return (
         <main className="flex-1 relative">
@@ -155,8 +156,8 @@ const Dashboard: React.FC = () => {
                 label={modalLabel}
                 onTitleChange={setModalTitle}
                 onContentChange={setModalContent}
-                onDateChange={setModalDate} // <-- allow to modify date
-                onLabelChange={setModalLabel} // <-- allow to modify label
+                onDateChange={setModalDate}
+                onLabelChange={setModalLabel}
                 onClose={handleModalClose}
                 onAdd={addOrUpdateNote}
             />
@@ -165,9 +166,10 @@ const Dashboard: React.FC = () => {
             <div
                 className="columns-1 sm:columns-2 md:columns-3 gap-4 mt-4 mb-20 md:mb-4 [column-fill:_balance]"
             >
-                {filteredNotes.map(note => (
+                {notes.map(note => (
                     <div key={note.id} className="break-inside-avoid mb-4">
                         <NoteCard note={note} onClick={() => handleNoteCardClick(note)} />
+                        {/* Optionally add a delete button here and call handleDeleteNote(note.id) */}
                     </div>
                 ))}
             </div>
