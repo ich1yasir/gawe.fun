@@ -160,11 +160,6 @@ const Dashboard: React.FC = () => {
                 onClose={handleModalClose}
                 onAdd={addOrUpdateNote}
             />
-            {/* 
-                In AddNoteModal, make sure to add:
-                - a date picker/input and call onDateChange when changed
-                - a label input (e.g. tags or chips) and call onLabelChange when changed
-            */}
 
             {/* Notes List */}
             <div

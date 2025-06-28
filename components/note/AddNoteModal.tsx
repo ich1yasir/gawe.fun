@@ -84,18 +84,18 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
             style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}
         >
             <div
-                className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md relative text-gray-900 dark:text-gray-100"
+                className="bg-white dark:bg-gray-800 pt-10 px-8 pb-8 rounded-lg shadow-lg w-full max-w-lg relative text-gray-900 dark:text-gray-100"
                 onClick={handleModalClick}
             >
                 <button
-                    className="absolute top-0 right-0 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-400"
+                    className="absolute top-0 right-0 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-400 cursor-pointer"
                     onClick={onClose}
                     aria-label="Close"
                     type="button"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
+                        className="h-6 w-6 rounded-full bg-gray-200 dark:bg-gray-700 p-1 cursor-pointer"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -120,6 +120,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
                     placeholder="Take a note..."
                     value={content}
                     onChange={e => onContentChange(e.target.value)}
+                    rows={10}
                     className={`w-full p-2 border ${showContentError ? "border-red-500" : "border-gray-300 dark:border-gray-600"} rounded resize-y min-h-[40px] focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100`}
                     required
                 />
@@ -142,11 +143,11 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
                     <label className="block text-sm font-medium mb-1" htmlFor="note-label">
                         Label
                     </label>
-                    <div className="flex flex-wrap gap-1 mb-1">
+                    <div className="flex flex-wrap gap-1 mb-2">
                         {label.map((lbl, idx) => (
                             <span
                                 key={lbl + idx}
-                                className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs flex items-center"
+                                className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-1 rounded-full text-xs flex items-center"
                             >
                                 {lbl}
                                 <button
@@ -174,7 +175,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
                     onClick={handleAdd}
                     className="mt-3 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition dark:bg-blue-500 dark:hover:bg-blue-600"
                 >
-                    Add Note
+                    Save Note
                 </button>
             </div>
         </div>

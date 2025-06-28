@@ -53,7 +53,18 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onEdit, onDelete, onPin, onCl
             )}
         </div>
         <div className="flex-1">
-            <p className="mt-2 text-gray-700 dark:text-gray-300">{note.content}</p>
+            <p
+                className="mt-2 text-gray-700 dark:text-gray-300 whitespace-pre-line overflow-hidden"
+                style={{
+                    display: "-webkit-box",
+                    WebkitLineClamp: 17,
+                    WebkitBoxOrient: "vertical",
+                    textOverflow: "ellipsis"
+                }}
+                title={note.content}
+            >
+                {note.content}
+            </p>
         </div>
         {Array.isArray(note.label) && note.label.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-1 justify-start text-xs">
