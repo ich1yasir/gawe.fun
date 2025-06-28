@@ -40,21 +40,20 @@ const Background: React.FC = () => {
     useEffect(() => {
         const generateBlocks = () => {
             const newBlocks: Block[] = [];
-            const numberOfBlocks = 10; // Adjust as needed
-
+            const numberOfBlocks = 10; 
             for (let i = 0; i < numberOfBlocks; i++) {
-                const size = Math.random() * 40 + 60; // 60px to 100px
+                const size = Math.random() * 60 + 80; // 60px to 100px
                 newBlocks.push({
                     id: i,
                     x: Math.random() * 90, // 0vw to 90vw
-                    // y: Math.random() * 80, // 0vh to 80vh (old)
-                    y: 80 + Math.random() * 20, // 80vh to 100vh (bottom of screen)
+                    y: Math.random() * 20, // 0vh to 20vh (top of screen)
                     size,
                     color: colors[Math.floor(Math.random() * colors.length)],
                     delay: Math.random() * 1,
                     rotation: Math.random() * 40 - 20, // -20deg to 20deg
                 });
             }
+
             setBlocks(newBlocks);
         };
 

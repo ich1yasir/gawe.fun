@@ -1,72 +1,183 @@
 'use client'
-import React, { useState } from "react";
-
-type Note = {
-  id: number;
-  title: string;
-  content: string;
-};
-
-const initialNotes: Note[] = [
-  { id: 1, title: "Shopping List", content: "Milk, Bread, Eggs" },
-  { id: 2, title: "Ideas", content: "Build a dashboard app" },
-];
+import React, { useState, useRef } from "react";
+import { Note } from "../../models/Note";
+import NoteCard from "./NoteCard";
+import AddNoteModal from "./AddNoteModal";
+import NoteInput from "./NoteInput";
+import SearchInput from "./SearchInput";
+import initialNotes from "../../models/data/initialNotes";
 
 const Dashboard: React.FC = () => {
-  const [notes, setNotes] = useState<Note[]>(initialNotes);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+    const [notes, setNotes] = useState<Note[]>(initialNotes);
+    const [inputValue, setInputValue] = useState("");
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalTitle, setModalTitle] = useState("");
+    const [modalContent, setModalContent] = useState("");
+    const [modalDate, setModalDate] = useState<Date>(new Date());
+    const [modalLabel, setModalLabel] = useState<string[]>([]);
+    const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
+    const [search, setSearch] = useState("");
+    const inputRef = useRef<HTMLInputElement>(null);
 
-  const addNote = () => {
-    if (title.trim() && content.trim()) {
-      setNotes([
-        ...notes,
-        { id: Date.now(), title: title.trim(), content: content.trim() },
-      ]);
-      setTitle("");
-      setContent("");
-    }
-  };
+    const handleInputFocus = () => {
+        setModalTitle(inputValue);
+        setModalContent("");
+        setModalDate(new Date());
+        setModalLabel([]);
+        setEditingNoteId(null);
+        setModalOpen(true);
+    };
 
-  return (
-      <main className="flex-1">
-        {/* Add Note */}
-        <div className="bg-white p-4 rounded-lg shadow mb-8 max-w-md">
-          <input
-            type="text"
-            placeholder="Title"
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            className="w-full p-2 mb-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
-          />
-          <textarea
-            placeholder="Take a note..."
-            value={content}
-            onChange={e => setContent(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded resize-y min-h-[40px] focus:outline-none focus:ring-2 focus:ring-blue-200"
-          />
-          <button
-            onClick={addNote}
-            className="mt-3 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-          >
-            Add Note
-          </button>
-        </div>
+    const handleModalClose = () => {
+        setModalOpen(false);
+        setInputValue("");
+        setEditingNoteId(null);
+    };
 
-        {/* Notes List */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {notes.map(note => (
+    // Add or update note: if note with same title exists, update its data (content, date, label), else add new note
+    const addOrUpdateNote = () => {
+        if (modalTitle.trim() && modalContent.trim()) {
+            if (editingNoteId !== null) {
+                // Update existing note by id
+                setNotes(notes =>
+                    notes.map(note =>
+                        note.id === editingNoteId
+                            ? {
+                                ...note,
+                                title: modalTitle.trim(),
+                                content: modalContent.trim(),
+                                date: modalDate,
+                                label: modalLabel,
+                            }
+                            : note
+                    )
+                );
+            } else {
+                // Check if note with same title exists
+                const existing = notes.find(note => note.title.trim() === modalTitle.trim());
+                if (existing) {
+                    // Update existing note's data (content, date, label)
+                    setNotes(notes =>
+                        notes.map(note =>
+                            note.title.trim() === modalTitle.trim()
+                                ? {
+                                    ...note,
+                                    content: modalContent.trim(),
+                                    date: modalDate,
+                                    label: modalLabel,
+                                }
+                                : note
+                        )
+                    );
+                } else {
+                    // Add new note
+                    setNotes([
+                        ...notes,
+                        {
+                            id: Date.now(),
+                            title: modalTitle.trim(),
+                            content: modalContent.trim(),
+                            date: modalDate,
+                            label: modalLabel,
+                        },
+                    ]);
+                }
+            }
+            setModalTitle("");
+            setModalContent("");
+            setModalDate(new Date());
+            setModalLabel([]);
+            setModalOpen(false);
+            setInputValue("");
+            setEditingNoteId(null);
+        }
+    };
+
+    // Click NoteCard to edit
+    const handleNoteCardClick = (note: Note) => {
+        setModalTitle(note.title);
+        setModalContent(note.content);
+        setModalDate(note.date);
+        setModalLabel(note.label || []);
+        setEditingNoteId(note.id);
+        setModalOpen(true);
+    };
+
+    // Filter notes by search
+    const filteredNotes = notes.filter(
+        note =>
+            note.title.toLowerCase().includes(search.toLowerCase()) ||
+            note.content.toLowerCase().includes(search.toLowerCase())
+    );
+
+    return (
+        <main className="flex-1 relative">
+            {/* Sticky header for desktop, sticky search for mobile */}
             <div
-              key={note.id}
-              className="bg-white p-4 rounded-lg shadow min-h-[100px]"
+                className="sticky top-0 z-20 bg-white/60 dark:bg-gray-900/60 border-b dark:border-gray-700 flex items-center justify-between px-4 py-2 gap-2
+                    md:flex-row md:gap-4
+                    flex-col
+                    md:h-16
+                "
             >
-              <strong className="block text-lg">{note.title}</strong>
-              <p className="mt-2 text-gray-700">{note.content}</p>
+                {/* Search always on top */}
+                <div className="hidden md:flex md:w-1/2 md:justify-start">
+                    <SearchInput value={search} onChange={setSearch} />
+                </div>
+                {/* NoteInput on right for desktop, hidden on mobile */}
+                <div className="hidden md:flex md:w-1/2 md:justify-end">
+                    <NoteInput
+                        value={inputValue}
+                        onChange={setInputValue}
+                        onFocus={handleInputFocus}
+                    />
+                </div>
+                {/* Mobile: show search on top */}
+                <div className="md:hidden w-full mb-2">
+                    <SearchInput value={search} onChange={setSearch} />
+                </div>
             </div>
-          ))}
-        </div>
-      </main>
-  );
+            {/* NoteInput sticky at bottom for mobile */}
+            <div className="fixed bottom-0 left-0 right-0 z-20 bg-white/60 dark:bg-gray-900/60 border-t dark:border-gray-700 px-4 py-2 md:hidden">
+                <NoteInput
+                    value={inputValue}
+                    onChange={setInputValue}
+                    onFocus={handleInputFocus}
+                />
+            </div>
+
+            {/* Modal */}
+            <AddNoteModal
+                open={modalOpen}
+                title={modalTitle}
+                content={modalContent}
+                date={modalDate}
+                label={modalLabel}
+                onTitleChange={setModalTitle}
+                onContentChange={setModalContent}
+                onDateChange={setModalDate} // <-- allow to modify date
+                onLabelChange={setModalLabel} // <-- allow to modify label
+                onClose={handleModalClose}
+                onAdd={addOrUpdateNote}
+            />
+            {/* 
+                In AddNoteModal, make sure to add:
+                - a date picker/input and call onDateChange when changed
+                - a label input (e.g. tags or chips) and call onLabelChange when changed
+            */}
+
+            {/* Notes List */}
+            <div
+                className="columns-1 sm:columns-2 md:columns-3 gap-4 mt-4 mb-20 md:mb-4 [column-fill:_balance]"
+            >
+                {filteredNotes.map(note => (
+                    <div key={note.id} className="break-inside-avoid mb-4">
+                        <NoteCard note={note} onClick={() => handleNoteCardClick(note)} />
+                    </div>
+                ))}
+            </div>
+        </main>
+    );
 };
 
 export default Dashboard;
