@@ -29,8 +29,9 @@ const PinIcon = () => (
 
 const NoteCard: React.FC<NoteCardProps> = ({ note, onDuplicate, onDelete, onPin, onClick }) => (
     <div
-        className="relative group p-4 rounded-lg shadow max-w-md bg-white/60 dark:bg-gray-800/60 transition flex flex-col
+        className="relative group p-4 rounded-lg shadow max-w-md bg-white/80 dark:bg-gray-800/80 transition flex flex-col
         min-h-[180px]
+        border border-white dark:border-gray-800 
         hover:shadow-2xl hover:border hover:border-emerald-600 hover:dark:border-emerald-400 hover:bg-white dark:hover:bg-gray-800
         hover:bg-opacity-100 dark:hover:bg-opacity-100
         cursor-pointer

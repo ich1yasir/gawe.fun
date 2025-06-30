@@ -15,9 +15,9 @@ const colors = [
     'bg-gray-300/60 dark:bg-gray-600/60',
     'bg-gray-400/60 dark:bg-gray-500/60',
     'bg-gray-100/60 dark:bg-gray-800/60',
-    'bg-gray-50/60 dark:bg-gray-900/60',
+    'bg-gray-300/60 dark:bg-gray-900/60',
 ];
-const colorRed = 'bg-red-200/60 dark:bg-red-700/60'
+const colorRed = 'bg-red-500/60 dark:bg-red-700/60'
 
 const Background: React.FC = () => {
     const [blocks, setBlocks] = useState<Block[]>([]);
@@ -39,7 +39,7 @@ const Background: React.FC = () => {
     useEffect(() => {
         const generateBlocks = () => {
             const newBlocks: Block[] = [];
-            const numberOfBlocks = 50; // Adjust as needed
+            const numberOfBlocks = 60; // Adjust as needed
             const blockWidth = 20; // Fixed width in px, adjust as needed
             const gap = 8; // Gap between blocks in px, adjust as needed
             const totalWidth = numberOfBlocks * blockWidth + (numberOfBlocks - 1) * gap;
@@ -90,7 +90,14 @@ const Background: React.FC = () => {
                     onKeyDown={(e) => handleKeyDown(e, block.id)}
                     role="button"
                     tabIndex={0}
-                    className={`${block.color} absolute origin-bottom animate-grow-from-bottom transition-all duration-300 ease-out hover:scale-105 hover:brightness-125 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    className={`
+                        ${block.color}
+                        absolute origin-bottom animate-grow-from-bottom transition-all duration-300 ease-out
+                        hover:scale-105 hover:brightness-125 cursor-pointer
+                        focus:outline-none focus:ring-2 focus:ring-blue-500
+                        shadow-lg dark:shadow-lg dark:shadow-gray-600/60
+                        shadow-gray-400 
+                    `}
                     style={{
                         left: `${block.x}vw`,
                         bottom: 0,

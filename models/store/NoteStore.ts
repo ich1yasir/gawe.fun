@@ -1,5 +1,6 @@
 import CryptoJS from "crypto-js";
 import { Note } from "../Note";
+import { PinStore } from "./PinStore";
 
 type NoteIndex = {
     id: number;
@@ -8,16 +9,22 @@ type NoteIndex = {
     label: string[];
 };
 
-const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || "";
-const STORAGE_KEY =process.env.STORAGE_KEY || "encrypted_notes";
-const INDEX_KEY = process.env.INDEX_KEY ||"notes_index";
+const STORAGE_KEY = process.env.STORAGE_KEY || "encrypted_notes";
+const INDEX_KEY = process.env.INDEX_KEY || "notes_index";
 
-function encrypt(data: string): string {
-    return CryptoJS.AES.encrypt(data, ENCRYPTION_KEY).toString();
+function getEncryptionKey(pin: string) {
+    // Use a static key + hashed pin for encryption
+    const staticKey = process.env.ENCRYPTION_KEY || "default_key";
+    const pinHash = CryptoJS.SHA256(pin).toString();
+    return staticKey + pinHash;
 }
 
-function decrypt(ciphertext: string): string {
-    const bytes = CryptoJS.AES.decrypt(ciphertext, ENCRYPTION_KEY);
+function encrypt(data: string, pin: string): string {
+    return CryptoJS.AES.encrypt(data, getEncryptionKey(pin)).toString();
+}
+
+function decrypt(ciphertext: string, pin: string): string {
+    const bytes = CryptoJS.AES.decrypt(ciphertext, getEncryptionKey(pin));
     return bytes.toString(CryptoJS.enc.Utf8);
 }
 
@@ -58,12 +65,12 @@ function noteToIndex(note: Note): NoteIndex {
     };
 }
 
-function getNoteById(id: number): Note | null {
+function getNoteById(id: number, pin: string): Note | null {
     const encryptedNotes = loadEncryptedNotes();
     const encrypted = encryptedNotes[id];
     if (!encrypted) return null;
     try {
-        const decrypted = decrypt(encrypted);
+        const decrypted = decrypt(encrypted, pin);
         const note = JSON.parse(decrypted, (key, value) =>
             key === "date" ? new Date(value) : value
         );
@@ -74,25 +81,25 @@ function getNoteById(id: number): Note | null {
 }
 
 export const NoteStore = {
-    insert(note: Note): void {
+    insert(note: Note, pin: string): void {
         const index = loadIndex();
         const encryptedNotes = loadEncryptedNotes();
         index.push(noteToIndex(note));
-        encryptedNotes[note.id] = encrypt(JSON.stringify(note));
+        encryptedNotes[note.id] = encrypt(JSON.stringify(note), pin);
         saveIndex(index);
         saveEncryptedNotes(encryptedNotes);
     },
 
-    update(note: Note): void {
+    update(note: Note, pin: string): void {
         let index = loadIndex();
         let encryptedNotes = loadEncryptedNotes();
         index = index.map(n => n.id === note.id ? noteToIndex(note) : n);
-        encryptedNotes[note.id] = encrypt(JSON.stringify(note));
+        encryptedNotes[note.id] = encrypt(JSON.stringify(note), pin);
         saveIndex(index);
         saveEncryptedNotes(encryptedNotes);
     },
 
-    delete(id: number): void {
+    delete(id: number, pin: string): void {
         let index = loadIndex();
         let encryptedNotes = loadEncryptedNotes();
         index = index.filter(n => n.id !== id);
@@ -108,6 +115,7 @@ export const NoteStore = {
             date?: Date;
             label?: string;
         },
+        pin: string,
         page: number = 1,
         pageSize: number = 10
     ): Note[] {
@@ -123,14 +131,14 @@ export const NoteStore = {
         let notes: Note[] = [];
         if (query.content) {
             for (const idx of index) {
-                const note = getNoteById(idx.id);
+                const note = getNoteById(idx.id, pin);
                 if (note && note.content.toLowerCase().includes(query.content.toLowerCase())) {
                     notes.push(note);
                 }
             }
         } else {
             notes = index.map(idx => {
-                const note = getNoteById(idx.id);
+                const note = getNoteById(idx.id, pin);
                 return note!;
             }).filter(Boolean) as Note[];
         }
@@ -141,25 +149,24 @@ export const NoteStore = {
         return notes.slice(start, end);
     },
 
-    clone(id: number): Note | null {
-        const note = getNoteById(id);
+    clone(id: number, pin: string): Note | null {
+        const note = getNoteById(id, pin);
         if (!note) return null;
         const newNote: Note = {
             ...note,
             id: Date.now(),
             date: new Date(),
         };
-        this.insert(newNote);
+        this.insert(newNote, pin);
         return newNote;
     },
 
-    getAll(): Note[] {
+    getAll(pin: string): Note[] {
         const index = loadIndex();
-        return index.map(idx => getNoteById(idx.id)!).filter(Boolean).sort((a, b) => b.date.getTime() - a.date.getTime());
+        return index.map(idx => getNoteById(idx.id, pin)!).filter(Boolean).sort((a, b) => b.date.getTime() - a.date.getTime());
     },
 
-
-    getById(id: number): Note | null {
-        return getNoteById(id);
+    getById(id: number, pin: string): Note | null {
+        return getNoteById(id, pin);
     }
 };

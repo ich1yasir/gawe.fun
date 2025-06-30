@@ -1,11 +1,15 @@
 'use client'
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Note } from "../../models/Note";
 import NoteCard from "./NoteCard";
 import AddNoteModal from "./AddNoteModal";
 import NoteInput from "./NoteInput";
 import SearchInput from "./SearchInput";
 import { NoteStore } from "../../models/store/NoteStore";
+import { PinStore } from "../../models/store/PinStore";
+import PinModal from "./PinModal";
+
+const PAGE_SIZE = 8;
 
 const Dashboard: React.FC = () => {
     const [notes, setNotes] = useState<Note[]>([]);
@@ -19,20 +23,63 @@ const Dashboard: React.FC = () => {
     const [search, setSearch] = useState("");
     const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; noteId: number | null }>({ open: false, noteId: null });
     const [snackbar, setSnackbar] = useState<{ open: boolean; message: string }>({ open: false, message: "" });
+    const [pinModalOpen, setPinModalOpen] = useState(true);
+    const [pin, setPin] = useState<string>("");
+    const [isSetPin, setIsSetPin] = useState(false);
 
-    // Load notes from NoteStore (filtered)
+    // Infinite scroll state
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const loaderRef = useRef<HTMLDivElement | null>(null);
+
+    // On mount, check if pin is set
     useEffect(() => {
+        setIsSetPin(!PinStore.hasPin());
+        setPinModalOpen(true);
+    }, []);
+
+    // Load notes from NoteStore (filtered) with pagination
+    useEffect(() => {
+        if (!pin) return;
+        let loadedNotes: Note[] = [];
+        let more = true;
         if (search.trim()) {
-            // Filter by title or content
-            const filtered = NoteStore.filter({
-                // title: search,
-                content: search
-            }, 1, 100);
-            setNotes(filtered);
+            loadedNotes = NoteStore.filter(
+                { title: search },
+                pin,
+                1,
+                page * PAGE_SIZE
+            );
+            more = loadedNotes.length === page * PAGE_SIZE;
         } else {
-            setNotes(NoteStore.getAll());
+            loadedNotes = NoteStore.getAll(pin).slice(0, page * PAGE_SIZE);
+            more = loadedNotes.length === page * PAGE_SIZE;
         }
-    }, [search, modalOpen]);
+        setNotes(loadedNotes);
+        setHasMore(more);
+    }, [search, modalOpen, pin, page]);
+
+    // Reset page when search or pin changes
+    useEffect(() => {
+        setPage(1);
+    }, [search, pin, modalOpen]);
+
+    // Infinite scroll observer
+    useEffect(() => {
+        if (!hasMore) return;
+        const observer = new window.IntersectionObserver(
+            entries => {
+                if (entries[0].isIntersecting) {
+                    setPage(prev => prev + 1);
+                }
+            },
+            { threshold: 1 }
+        );
+        if (loaderRef.current) observer.observe(loaderRef.current);
+        return () => {
+            if (loaderRef.current) observer.unobserve(loaderRef.current);
+        };
+    }, [hasMore, loaderRef.current]);
 
     const handleInputFocus = () => {
         setModalTitle(inputValue);
@@ -51,9 +98,9 @@ const Dashboard: React.FC = () => {
 
     // Add or update note using NoteStore
     const addOrUpdateNote = () => {
+        if (!pin) return;
         if (modalTitle.trim() && modalContent.trim()) {
             if (editingNoteId !== null) {
-                // Update existing note by id
                 const note: Note = {
                     id: editingNoteId,
                     title: modalTitle.trim(),
@@ -61,21 +108,18 @@ const Dashboard: React.FC = () => {
                     date: modalDate,
                     label: modalLabel,
                 };
-                NoteStore.update(note);
+                NoteStore.update(note, pin);
             } else {
-                // Check if note with same title exists
                 const existing = notes.find(note => note.title.trim() === modalTitle.trim());
                 if (existing) {
-                    // Update existing note's data (content, date, label)
                     const updatedNote: Note = {
                         ...existing,
                         content: modalContent.trim(),
                         date: modalDate,
                         label: modalLabel,
                     };
-                    NoteStore.update(updatedNote);
+                    NoteStore.update(updatedNote, pin);
                 } else {
-                    // Add new note
                     const newNote: Note = {
                         id: Date.now(),
                         title: modalTitle.trim(),
@@ -83,7 +127,7 @@ const Dashboard: React.FC = () => {
                         date: modalDate,
                         label: modalLabel,
                     };
-                    NoteStore.insert(newNote);
+                    NoteStore.insert(newNote, pin);
                 }
             }
             setModalTitle("");
@@ -93,7 +137,7 @@ const Dashboard: React.FC = () => {
             setModalOpen(false);
             setInputValue("");
             setEditingNoteId(null);
-            setNotes(NoteStore.getAll());
+            setPage(1); // reload from first page
         }
     };
 
@@ -109,7 +153,7 @@ const Dashboard: React.FC = () => {
 
     // Duplicate note with title append "copy (n)"
     const handleDuplicateNote = (note: Note) => {
-        // Find all notes with titles starting with note.title + " copy"
+        if (!pin) return;
         const baseTitle = note.title;
         const regex = new RegExp(`^${baseTitle}( copy( \\((\\d+)\\))?)?$`);
         const matches = notes
@@ -118,7 +162,6 @@ const Dashboard: React.FC = () => {
 
         let copyNumber = 1;
         if (matches.length > 0) {
-            // Find the highest copy number
             const numbers = matches
                 .map(title => {
                     const match = title.match(/ copy(?: \((\d+)\))?$/);
@@ -136,8 +179,8 @@ const Dashboard: React.FC = () => {
             title: newTitle,
             date: new Date(),
         };
-        NoteStore.insert(newNote);
-        setNotes(NoteStore.getAll());
+        NoteStore.insert(newNote, pin);
+        setPage(1); // reload from first page
         setSnackbar({ open: true, message: "Note duplicated successfully!" });
     };
 
@@ -147,9 +190,10 @@ const Dashboard: React.FC = () => {
     };
 
     const confirmDelete = () => {
+        if (!pin) return;
         if (deleteConfirm.noteId !== null) {
-            NoteStore.delete(deleteConfirm.noteId);
-            setNotes(NoteStore.getAll());
+            NoteStore.delete(deleteConfirm.noteId, pin);
+            setPage(1); // reload from first page
             setSnackbar({ open: true, message: "Note deleted permanently." });
         }
         setDeleteConfirm({ open: false, noteId: null });
@@ -167,8 +211,25 @@ const Dashboard: React.FC = () => {
         }
     }, [snackbar.open]);
 
+    // Handle PIN modal submit
+    const handlePinSubmit = (enteredPin: string) => {
+        if (isSetPin) {
+            PinStore.setPin(enteredPin);
+            setPin(enteredPin);
+            setPinModalOpen(false);
+        } else {
+            if (PinStore.verifyPin(enteredPin)) {
+                setPin(enteredPin);
+                setPinModalOpen(false);
+            } else {
+                setSnackbar({ open: true, message: "Incorrect PIN. Please try again." });
+            }
+        }
+    };
+
     return (
         <main className="flex-1 relative">
+            <PinModal open={pinModalOpen} onSubmit={handlePinSubmit} isSetPin={isSetPin} />
             {/* Sticky header for desktop, sticky search for mobile */}
             <div
                 className="sticky top-0 z-20 bg-white/60 dark:bg-gray-900/60 border-b border-emerald-600 dark:border-emerald-400
@@ -251,7 +312,7 @@ const Dashboard: React.FC = () => {
             {/* Snackbar */}
             {snackbar.open && (
                 <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
-                    <div className="bg-emerald-200 dark:bg-emerald-800 text-black dark:text-white px-6 py-3 rounded shadow-lg text-center min-w-[200px]">
+                    <div className="bg-emerald-600 text-white px-6 py-3 rounded shadow-lg text-center min-w-[200px]">
                         {snackbar.message}
                     </div>
                 </div>
@@ -272,6 +333,12 @@ const Dashboard: React.FC = () => {
                     </div>
                 ))}
             </div>
+            {/* Infinite scroll loader */}
+            {hasMore && (
+                <div ref={loaderRef} className="flex justify-center py-6 text-gray-500 dark:text-gray-400">
+                    Loading more notes...
+                </div>
+            )}
         </main>
     );
 };

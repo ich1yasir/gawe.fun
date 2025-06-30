@@ -40,18 +40,46 @@ const Background: React.FC = () => {
     useEffect(() => {
         const generateBlocks = () => {
             const newBlocks: Block[] = [];
-            const numberOfBlocks = 10; 
-            for (let i = 0; i < numberOfBlocks; i++) {
-                const size = Math.random() * 60 + 80; // 60px to 100px
-                newBlocks.push({
-                    id: i,
-                    x: Math.random() * 90, // 0vw to 90vw
-                    y: Math.random() * 20, // 0vh to 20vh (top of screen)
-                    size,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    delay: Math.random() * 1,
-                    rotation: Math.random() * 40 - 20, // -20deg to 20deg
+            const numberOfBlocks = 16;
+            const sizeRange = [80, 140];
+            const xRange = [0, 90];
+            const yRange = [75, 95];
+            const buffer = 8;
+
+            // Precompute vw/vh to avoid repeated calculation
+            const vw = window.innerWidth / 100;
+            const vh = window.innerHeight / 100;
+
+            let attempts = 0;
+            while (newBlocks.length < numberOfBlocks && attempts < numberOfBlocks * 100) {
+                const size = Math.random() * (sizeRange[1] - sizeRange[0]) + sizeRange[0];
+                const x = Math.random() * (xRange[1] - xRange[0]) + xRange[0];
+                const y = Math.random() * (yRange[1] - yRange[0]) + yRange[0];
+                const px = x * vw;
+                const py = y * vh;
+
+                // Check overlap with all existing blocks for better accuracy
+                const overlaps = newBlocks.some(existing => {
+                    const ex = existing.x * vw;
+                    const ey = existing.y * vh;
+                    const minDist = (existing.size + size) / 2 + buffer;
+                    const dx = px - ex;
+                    const dy = py - ey;
+                    return dx * dx + dy * dy < minDist * minDist;
                 });
+
+                if (!overlaps) {
+                    newBlocks.push({
+                        id: newBlocks.length,
+                        x,
+                        y,
+                        size,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        delay: Math.random(),
+                        rotation: Math.random() * 40 - 20,
+                    });
+                }
+                attempts++;
             }
 
             setBlocks(newBlocks);
@@ -70,9 +98,9 @@ const Background: React.FC = () => {
         }
     };
     return (
-        <div className="absolute inset-0 overflow-hidden -z-10">
+        <div className="fixed inset-0 overflow-hidden -z-10">
             {/* Overlay for readability */}
-            <div className="absolute inset-0 bg-white/60 dark:bg-black/40 pointer-events-none z-10" />
+            <div className="fixed inset-0 bg-white/60 dark:bg-black/40 pointer-events-none z-10" />
             {/* Colored blocks */}
             {blocks.map((block) => (
                 <div
@@ -83,7 +111,8 @@ const Background: React.FC = () => {
                     tabIndex={0}
                     className={`
                     ${block.color}
-                    absolute shadow-lg
+                    absolute
+                    shadow-lg shadow-black/30
                     transition-all duration-300 ease-out
                     hover:scale-105 hover:brightness-125
                     cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500

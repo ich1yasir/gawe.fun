@@ -19,13 +19,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${lato.variable} antialiased`}
-      >
-        <Background />
-        {children}
-      </body>
-    </html>
+    <div className={`${lato.variable} antialiased`}>
+      <Background />
+      {children}
+    </div>
   );
 }
