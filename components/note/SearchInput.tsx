@@ -6,7 +6,7 @@ const SearchInput: React.FC<{
         <input
             type="text"
             placeholder="Search notes..."
-            className="w-full pr-10 px-3 py-2 border rounded focus:outline-none bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 border-gray-300 dark:border-gray-700 focus:border-blue-500 focus:shadow-md"
+            className="w-full pr-10 px-3 py-2 border rounded focus:outline-none bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-emerald-600 dark:focus:ring-emerald-400 focus:shadow-md"
             value={value}
             onChange={e => onChange(e.target.value)}
         />

@@ -88,7 +88,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
                 onClick={handleModalClick}
             >
                 <button
-                    className="absolute top-0 right-0 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-400 cursor-pointer"
+                    className="absolute top-0 right-0 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-600 dark:focus:ring-emerald-400 cursor-pointer"
                     onClick={onClose}
                     aria-label="Close"
                     type="button"
@@ -109,7 +109,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
                     placeholder="Title"
                     value={title}
                     onChange={e => onTitleChange(e.target.value)}
-                    className={`w-full p-2 mb-2 border ${showTitleError ? "border-red-500" : "border-gray-300 dark:border-gray-600"} rounded focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100`}
+                    className={`w-full p-2 mb-2 border ${showTitleError ? "border-red-500" : "border-gray-300 dark:border-gray-600"} rounded focus:outline-none focus:ring-2 focus:ring-emerald-600 dark:focus:ring-emerald-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100`}
                     autoFocus
                     required
                 />
@@ -121,7 +121,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
                     value={content}
                     onChange={e => onContentChange(e.target.value)}
                     rows={10}
-                    className={`w-full p-2 border ${showContentError ? "border-red-500" : "border-gray-300 dark:border-gray-600"} rounded resize-y min-h-[40px] focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100`}
+                    className={`w-full p-2 border ${showContentError ? "border-red-500" : "border-gray-300 dark:border-gray-600"} rounded resize-y min-h-[40px] focus:outline-none focus:ring-2 focus:ring-emerald-600 dark:focus:ring-emerald-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100`}
                     required
                 />
                 {showContentError && (
@@ -136,7 +136,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
                         type="date"
                         value={formatDate(date)}
                         onChange={e => handleDateChange(e.target.value)}
-                        className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                        className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-emerald-600 dark:focus:ring-emerald-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     />
                 </div>
                 <div className="mb-2">
@@ -168,7 +168,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
                         value={labelInput}
                         onChange={e => handleLabelInputChange(e.target.value)}
                         onKeyDown={handleLabelInputKeyDown}
-                        className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                        className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-emerald-600 dark:focus:ring-emerald-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     />
                 </div>
                 <button

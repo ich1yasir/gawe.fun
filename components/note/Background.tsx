@@ -12,13 +12,13 @@ interface Block {
 }
 
 const colors = [
-    'bg-blue-300/80 dark:bg-blue-800/80',
-    'bg-green-300/80 dark:bg-green-800/80',
-    'bg-red-300/80 dark:bg-red-800/80',
-    'bg-yellow-300/80 dark:bg-yellow-800/80',
-    'bg-purple-300/80 dark:bg-purple-800/80',
-    'bg-pink-300/80 dark:bg-pink-800/80',
-    'bg-orange-300/80 dark:bg-orange-800/80',
+    'bg-blue-500 dark:bg-blue-600',
+    'bg-green-500 dark:bg-green-600',
+    'bg-red-500 dark:bg-red-600',
+    'bg-yellow-500 dark:bg-yellow-600',
+    'bg-purple-500 dark:bg-purple-600',
+    'bg-pink-500 dark:bg-pink-600',
+    'bg-orange-500 dark:bg-orange-600',
 ];
 
 const Background: React.FC = () => {

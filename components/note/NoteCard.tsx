@@ -1,17 +1,16 @@
 import { Note } from "../../models/Note";
 type NoteCardProps = {
     note: Note;
-    onEdit?: () => void;
+    onDuplicate?: () => void;
     onDelete?: () => void;
     onPin?: () => void;
     onClick?: () => void;
 };
 const ICON_COLOR = "currentColor";
 
-const EditIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill={ICON_COLOR}>
-        <path d="M160-400v-80h280v80H160Zm0-160v-80h440v80H160Zm0-160v-80h440v80H160Zm360 560v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q8 9 12.5 20t4.5 22q0 11-4 22.5T863-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z"/>
-    </svg>
+// Duplicate icon (two overlapping documents)
+const DuplicateIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill={ICON_COLOR}><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg>
 );
 
 const TrashIcon = () => (
@@ -26,14 +25,16 @@ const PinIcon = () => (
     </svg>
 );
 
-const NoteCard: React.FC<NoteCardProps> = ({ note, onEdit, onDelete, onPin, onClick }) => (
+
+
+const NoteCard: React.FC<NoteCardProps> = ({ note, onDuplicate, onDelete, onPin, onClick }) => (
     <div
         className="relative group p-4 rounded-lg shadow max-w-md bg-white/60 dark:bg-gray-800/60 transition flex flex-col
         min-h-[180px]
-        hover:shadow-2xl hover:border hover:border-blue-500 hover:bg-white dark:hover:bg-gray-800
+        hover:shadow-2xl hover:border hover:border-emerald-600 hover:dark:border-emerald-400 hover:bg-white dark:hover:bg-gray-800
         hover:bg-opacity-100 dark:hover:bg-opacity-100
         cursor-pointer
-        hover:scale-102
+        hover:scale-100
         duration-200
         "
         style={{ minHeight: 180 }}
@@ -81,15 +82,15 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onEdit, onDelete, onPin, onCl
         <div className="absolute cursor-pointer left-0 right-0 bottom-2 flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto px-4">
             <button
                 className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
-                onClick={onEdit}
-                aria-label="Edit"
+                onClick={e => { e.stopPropagation(); onDuplicate && onDuplicate(); }}
+                aria-label="Duplicate"
                 type="button"
             >
-                <EditIcon />
+                <DuplicateIcon />
             </button>
             <button
                 className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
-                onClick={onDelete}
+                onClick={e => { e.stopPropagation(); onDelete && onDelete(); }}
                 aria-label="Delete"
                 type="button"
             >
@@ -104,16 +105,6 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onEdit, onDelete, onPin, onCl
                 <PinIcon />
             </button>
         </div>
-        {/* Make the whole card clickable for edit if onEdit is provided */}
-        {onEdit && (
-            <button
-                className="absolute inset-0 z-10 cursor-pointer bg-transparent border-0 p-0 m-0"
-                style={{ outline: "none" }}
-                aria-label="Open note"
-                onClick={onEdit}
-                tabIndex={-1}
-            />
-        )}
     </div>
 );
 

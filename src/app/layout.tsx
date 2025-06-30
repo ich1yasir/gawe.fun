@@ -21,10 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${lato.variable} antialiased`} suppressHydrationWarning>
-        {children}
-      </body>
-    </html>
+    <div className={`${lato.variable} antialiased`} suppressHydrationWarning>
+      {children}
+    </div>
   );
 }

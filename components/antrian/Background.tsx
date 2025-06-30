@@ -10,14 +10,14 @@ interface Block {
   delay: number;
 }
 
-// Using lighter, less saturated colors for background with opacity for both light and dark modes
 const colors = [
-  'bg-blue-300/20 dark:bg-blue-800/20',
-  'bg-green-300/20 dark:bg-green-800/20',
-  'bg-red-300/20 dark:bg-red-800/20',
-  'bg-yellow-300/20 dark:bg-yellow-800/20',
-  'bg-purple-300/20 dark:bg-purple-800/20',
+    'bg-gray-200/60 dark:bg-gray-700/60',
+    'bg-gray-300/60 dark:bg-gray-600/60',
+    'bg-gray-400/60 dark:bg-gray-500/60',
+    'bg-gray-100/60 dark:bg-gray-800/60',
+    'bg-gray-50/60 dark:bg-gray-900/60',
 ];
+const colorRed = 'bg-red-200/60 dark:bg-red-700/60'
 
 const Background: React.FC = () => {
     const [blocks, setBlocks] = useState<Block[]>([]);
@@ -40,16 +40,29 @@ const Background: React.FC = () => {
         const generateBlocks = () => {
             const newBlocks: Block[] = [];
             const numberOfBlocks = 50; // Adjust as needed
+            const blockWidth = 20; // Fixed width in px, adjust as needed
+            const gap = 8; // Gap between blocks in px, adjust as needed
+            const totalWidth = numberOfBlocks * blockWidth + (numberOfBlocks - 1) * gap;
+            const screenWidth = window.innerWidth;
+            const scale = screenWidth < totalWidth ? screenWidth / totalWidth : 1;
+
+            // Randomly pick one index to use colorRed
+            const redBlockIndex = Math.floor(Math.random() * numberOfBlocks);
 
             for (let i = 0; i < numberOfBlocks; i++) {
-                newBlocks.push({
-                    id: i,
-                    x: Math.random() * 100,
-                    width: Math.random() * 30 + 10, // Random width between 10px and 40px
-                    height: Math.random() * 150 + 50, // Random height between 50px and 200px
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    delay: Math.random() * 10,
-                });
+            const width = blockWidth * scale;
+            const xPx = i * (blockWidth + gap) * scale;
+            const x = (xPx / screenWidth) * 100; // convert px to vw
+            newBlocks.push({
+                id: i,
+                x,
+                width,
+                height: Math.random() * 150 + 50, // Random height between 50px and 200px
+                color: i === redBlockIndex
+                ? colorRed
+                : colors[Math.floor(Math.random() * colors.length)],
+                delay: Math.random() * 10,
+            });
             }
             setBlocks(newBlocks);
         };
