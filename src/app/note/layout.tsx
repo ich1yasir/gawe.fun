@@ -8,10 +8,12 @@ const lato = Lato({
   weight: ["400", "700"], // adjust weights as needed
 });
 
+
 export const metadata: Metadata = {
-  title: "Antrian Management App",
-  description: "Antrian Management App for managing queues and customers.",
+  title: "OxNote - Secure Your Personal Note",
+  description: "This note is totally your data, only available on your device. We never store anything on our server. OxNote is your personal, private, and secure note-taking app—your notes, your control!",
 };
+
 
 export default function RootLayout({
   children,

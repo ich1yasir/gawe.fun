@@ -4,4 +4,5 @@ export type Note = {
     content: string;
     date: Date;
     label: string[];
+    pinned?: boolean;
 };

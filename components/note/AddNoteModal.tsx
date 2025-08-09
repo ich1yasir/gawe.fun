@@ -30,6 +30,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
     const [touched, setTouched] = useState(false);
     const [labelInput, setLabelInput] = useState("");
 
+
     if (!open) return null;
 
     const handleModalClick = (e: React.MouseEvent) => {
@@ -41,6 +42,14 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
         if (title.trim() && content.trim()) {
             onAdd();
             setTouched(false);
+        }
+    };
+
+    // Keyboard shortcut: Ctrl+Enter or Cmd+Enter to save
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+            e.preventDefault();
+            handleAdd();
         }
     };
 
@@ -86,6 +95,8 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
             <div
                 className="bg-white dark:bg-gray-800 pt-10 px-8 pb-8 rounded-lg shadow-lg w-full max-w-lg relative text-gray-900 dark:text-gray-100"
                 onClick={handleModalClick}
+                onKeyDown={handleKeyDown}
+                tabIndex={0}
             >
                 <button
                     className="absolute top-0 right-0 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-600 dark:focus:ring-emerald-400 cursor-pointer"
@@ -143,20 +154,23 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
                     <label className="block text-sm font-medium mb-1" htmlFor="note-label">
                         Label
                     </label>
-                    <div className="flex flex-wrap gap-1 mb-2">
+                    <div className="flex flex-wrap gap-2 mb-2">
                         {label.map((lbl, idx) => (
                             <span
                                 key={lbl + idx}
-                                className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-1 rounded-full text-xs flex items-center"
+                                className="flex items-center bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-3 py-1 rounded-full text-xs font-medium shadow-sm"
                             >
                                 {lbl}
                                 <button
                                     type="button"
-                                    className="ml-1 text-blue-500 hover:text-blue-700"
+                                    className="ml-1 text-blue-500 hover:text-blue-700 focus:outline-none"
                                     onClick={() => handleRemoveLabel(idx)}
                                     aria-label="Remove label"
+                                    tabIndex={-1}
                                 >
-                                    ×
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 20 20" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l8 8M6 14L14 6" />
+                                    </svg>
                                 </button>
                             </span>
                         ))}

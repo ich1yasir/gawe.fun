@@ -36,3 +36,19 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(90%) sepia(10%) saturate(500%) hue-rotate(0deg) brightness(120%);
   }
 }
+
+/* Chat message animations */
+@keyframes fade-in-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-down {
+  animation: fade-in-down 0.3s ease-out;
+}

@@ -29,7 +29,7 @@ const PinIcon = () => (
 
 const NoteCard: React.FC<NoteCardProps> = ({ note, onDuplicate, onDelete, onPin, onClick }) => (
     <div
-        className="relative group p-4 rounded-lg shadow max-w-md bg-white/80 dark:bg-gray-800/80 transition flex flex-col
+        className="relative group p-4 pb-14 rounded-lg shadow max-w-md bg-white/80 dark:bg-gray-800/80 transition flex flex-col
         min-h-[180px]
         border border-white dark:border-gray-800 
         hover:shadow-2xl hover:border hover:border-emerald-600 hover:dark:border-emerald-400 hover:bg-white dark:hover:bg-gray-800
@@ -69,11 +69,11 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onDuplicate, onDelete, onPin,
             </p>
         </div>
         {Array.isArray(note.label) && note.label.length > 0 && (
-            <div className="mt-4 flex flex-wrap gap-1 justify-start text-xs">
+            <div className="mt-4 flex flex-wrap gap-2 justify-start text-xs">
                 {note.label.map((lbl: string, idx: number) => (
                     <span
-                        key={idx}
-                        className="px-2 py-0.5 rounded text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                        key={lbl + idx}
+                        className="flex items-center bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-3 py-1 rounded-full text-xs font-medium shadow-sm"
                     >
                         {lbl}
                     </span>
@@ -99,7 +99,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onDuplicate, onDelete, onPin,
             </button>
             <button
                 className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
-                onClick={onPin}
+                onClick={e => { e.stopPropagation(); onPin && onPin(); }}
                 aria-label="Pin"
                 type="button"
             >
