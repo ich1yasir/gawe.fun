@@ -97,19 +97,19 @@ const MessageInput: React.FC<MessageInputProps> = ({
 
   return (
     <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-      <form onSubmit={handleSubmit} className="flex items-end space-x-2 p-4">
-        <div className="flex-1 relative">
+      <form onSubmit={handleSubmit} className="flex items-center space-x-2 p-4">
+        <div className="flex-1 relative flex items-center">
           <textarea
-            ref={textareaRef}
-            value={message}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            placeholder={disabled ? "Connect to start chatting..." : "Type your message... (Enter to send, Shift+Enter for new line)"}
-            disabled={disabled}
-            className="w-full resize-none rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed"
-            rows={1}
-            style={{ minHeight: '40px', maxHeight: '120px' }}
-            maxLength={1000}
+        ref={textareaRef}
+        value={message}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        placeholder={disabled ? "Connect to start chatting..." : "Type your message... (Enter to send, Shift+Enter for new line)"}
+        disabled={disabled}
+        className="w-full resize-none rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed"
+        rows={1}
+        style={{ minHeight: '40px', maxHeight: '120px' }}
+        maxLength={1000}
           />
         </div>
         
@@ -118,8 +118,19 @@ const MessageInput: React.FC<MessageInputProps> = ({
           disabled={!message.trim() || disabled}
           className="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            style={{ transform: 'rotate(135deg)' }}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+            />
           </svg>
         </button>
       </form>

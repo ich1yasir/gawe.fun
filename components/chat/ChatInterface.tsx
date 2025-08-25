@@ -48,42 +48,41 @@ const ChatInterface: React.FC = () => {
     maxAutoReconnectAttempts
   } = useSocket();
 
-  // Auto-reconnect to latest channel when socket connects
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
+    // Auto-reconnect functionality disabled due to bugs
+  // useEffect(() => {
+  //   let timeoutId: NodeJS.Timeout;
     
-    const attemptAutoReconnect = async () => {
-      if (isConnected && !currentChannelCode && !isJoining && autoReconnectAttempts < maxAutoReconnectAttempts) {
-        setIsAutoReconnecting(true);
+  //   const attemptAutoReconnect = async () => {
+  //     if (isConnected && !currentChannelCode && !isJoining && autoReconnectAttempts < maxAutoReconnectAttempts) {
+  //       setIsAutoReconnecting(true);
         
-        try {
-          const reconnected = await autoReconnect();
-          if (reconnected) {
-            console.log('Successfully auto-reconnected to latest channel');
-          } else if (autoReconnectAttempts >= maxAutoReconnectAttempts) {
-            console.log('Max auto-reconnect attempts reached, giving up');
-            resetAutoReconnect();
-          }
-        } catch (error) {
-          console.error('Auto-reconnect error:', error);
-        } finally {
-          setIsAutoReconnecting(false);
-        }
-      }
-    };
+  //       try {
+  //         const reconnected = await autoReconnect();
+  //         if (reconnected) {
+  //           console.log('Successfully auto-reconnected to latest channel');
+  //         } else if (autoReconnectAttempts >= maxAutoReconnectAttempts) {
+  //           console.log('Max auto-reconnect attempts reached, giving up');
+  //         }
+  //       } catch (error) {
+  //         console.error('Auto-reconnect error:', error);
+  //       } finally {
+  //         setIsAutoReconnecting(false);
+  //       }
+  //     }
+  //   };
 
-    if (isConnected && !currentChannelCode && !isJoining && autoReconnectAttempts < maxAutoReconnectAttempts) {
-      // Small delay to ensure socket is fully ready
-      timeoutId = setTimeout(attemptAutoReconnect, 1000);
-    }
+  //   if (isConnected && !currentChannelCode && !isJoining && autoReconnectAttempts < maxAutoReconnectAttempts) {
+  //     // Small delay to ensure socket is fully ready
+  //     timeoutId = setTimeout(attemptAutoReconnect, 1000);
+  //   }
     
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-      setIsAutoReconnecting(false);
-    };
-  }, [isConnected, currentChannelCode, isJoining, autoReconnectAttempts, maxAutoReconnectAttempts, autoReconnect, resetAutoReconnect]);
+  //   return () => {
+  //     if (timeoutId) {
+  //       clearTimeout(timeoutId);
+  //     }
+  //     setIsAutoReconnecting(false);
+  //   };
+  // }, [isConnected, currentChannelCode, isJoining, autoReconnectAttempts, maxAutoReconnectAttempts, autoReconnect, resetAutoReconnect]);
 
   // Scroll to top when new messages arrive (since newest are at top)
   useEffect(() => {
@@ -146,9 +145,9 @@ const ChatInterface: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row h-full max-w-6xl mx-auto gap-4">
-      {/* Main chat area */}
-      <div className="flex-1 flex flex-col bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-lg shadow-xl border border-gray-200 dark:border-gray-700">
+    <div className="flex flex-col h-full w-full mx-auto relative">
+      {/* Sticky Chat Header */}
+      <div className="sticky top-0 z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
         <ChatHeader 
           isConnected={isConnected}
           channelCode={currentChannelCode}
@@ -156,41 +155,55 @@ const ChatInterface: React.FC = () => {
           onLeaveChannel={handleLeaveChannel}
           onClearChat={handleClearChat}
         />
-        
-        <MessageInput 
-          onSendMessage={handleSendMessage}
-          onStartTyping={startTyping}
-          onStopTyping={stopTyping}
-          disabled={!isConnected}
-        />
-        
-        <div className="flex-1 overflow-hidden">
-          <div 
-            ref={messagesTopRef}
-            className="h-full overflow-y-auto"
-          >
-            <MessageList 
-              messages={messages} 
-              currentUserId={currentUserId || undefined}
-              isTopOriented={true}
-            />
-          </div>
-        </div>
-
-        {connectionError && (
-          <div className="mx-4 mb-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-lg text-sm">
-            {connectionError}
-          </div>
-        )}
       </div>
 
-      {/* Participants sidebar */}
-      <div className="lg:w-80 flex-shrink-0">
+      <div className="flex flex-1 overflow-hidden">
+        {/* Main chat area - full width on mobile, with sidebar on desktop */}
+        <div className="flex-1 flex flex-col bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm">
+          <MessageInput 
+            onSendMessage={handleSendMessage}
+            onStartTyping={startTyping}
+            onStopTyping={stopTyping}
+            disabled={!isConnected}
+          />
+          
+          <div className="flex-1 overflow-hidden">
+            <div 
+              ref={messagesTopRef}
+              className="h-full overflow-y-auto"
+            >
+              <MessageList 
+                messages={messages} 
+                currentUserId={currentUserId || undefined}
+                isTopOriented={true}
+              />
+            </div>
+          </div>
+
+          {connectionError && (
+            <div className="mx-4 mb-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-lg text-sm">
+              {connectionError}
+            </div>
+          )}
+        </div>
+
+        {/* Participants sidebar - only visible on desktop (lg+) */}
+        <div className="hidden lg:block">
+          <ParticipantsList
+            participants={participants}
+            typingUsers={typingUsers}
+            currentUserId={currentUserId || undefined}
+            className="h-full border-l border-gray-200 dark:border-gray-700 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm"
+          />
+        </div>
+      </div>
+
+      {/* Mobile participants drawer - only visible on mobile */}
+      <div className="lg:hidden">
         <ParticipantsList
           participants={participants}
           typingUsers={typingUsers}
           currentUserId={currentUserId || undefined}
-          className="h-full"
         />
       </div>
     </div>
