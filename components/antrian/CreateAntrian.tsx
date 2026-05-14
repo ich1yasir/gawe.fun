@@ -33,6 +33,7 @@ type MenuKey = "dashboard" | "queues" | "details" | "client";
 
 type QueueItem = {
   id: string;
+  publicCode?: string;
   ownerId: string;
   name: string;
   prefixCode: string;
@@ -63,7 +64,16 @@ const sectors = ["Finance", "Hospitality", "Government", "Restaurant", "Other"];
 const employeeRanges = ["1-10", "11-50", "51-200", "201-500", "501-1000", "1000+"];
 
 function normalizeQueueCode(input: string) {
-  return input.trim();
+  return input.trim().toUpperCase();
+}
+
+function generateQueueCode(prefixCode: string) {
+  const randomPart = Math.random().toString(36).slice(2, 8).toUpperCase();
+  return `${prefixCode}-${randomPart}`;
+}
+
+function getQueueDisplayCode(queue: QueueItem) {
+  return queue.publicCode ?? `${queue.prefixCode}-UNSET`;
 }
 
 const CreateAntrian: React.FC = () => {
@@ -136,16 +146,15 @@ const CreateAntrian: React.FC = () => {
       }));
 
       setQueues(mapped);
-      if (!selectedQueueId && mapped.length > 0) {
-        setSelectedQueueId(mapped[0].id);
-      }
-      if (mapped.length === 0) {
-        setSelectedQueueId("");
-      }
+      setSelectedQueueId((currentSelectedQueueId) => {
+        if (mapped.length === 0) return "";
+        if (currentSelectedQueueId) return currentSelectedQueueId;
+        return mapped[0].id;
+      });
     });
 
     return () => unsubscribe();
-  }, [selectedQueueId, user]);
+  }, [user]);
 
   useEffect(() => {
     if (!db || !selectedQueueId) {
@@ -214,11 +223,11 @@ const CreateAntrian: React.FC = () => {
   const numbersAhead = clientQueueTickets.filter(
     (ticket) =>
       ticket.number < clientTicketNumber &&
-      ticket.status !== "done" &&
+      ticket.status === "waiting" &&
       ticket.id !== clientTicketId,
   ).length;
 
-  async function upsertQueue(ownerId: string) {
+  async function createQueue(ownerId: string) {
     if (!db) return;
 
     const safeName = queueName.trim();
@@ -229,6 +238,7 @@ const CreateAntrian: React.FC = () => {
       ownerId,
       name: safeName,
       prefixCode: safePrefixCode,
+      publicCode: generateQueueCode(safePrefixCode),
       sector: queueSector,
       employeeRange: queueEmployeeRange,
       isOpen: true,
@@ -266,8 +276,14 @@ const CreateAntrian: React.FC = () => {
           email,
           authPassword,
         );
-        await upsertQueue(credential.user.uid);
-        setInfoMessage("Account created successfully.");
+        try {
+          await createQueue(credential.user.uid);
+          setInfoMessage("Account and initial queue created successfully.");
+        } catch (queueError) {
+          const queueMessage =
+            queueError instanceof Error ? queueError.message : "Unable to create initial queue.";
+          setInfoMessage(`Account created successfully, but initial queue failed: ${queueMessage}`);
+        }
       } else {
         const credential = await signInWithEmailAndPassword(auth as Auth, email, authPassword);
         setInfoMessage(`Welcome back, ${credential.user.email ?? "User"}.`);
@@ -321,7 +337,7 @@ const CreateAntrian: React.FC = () => {
     setInfoMessage("");
 
     try {
-      await upsertQueue(user.uid);
+      await createQueue(user.uid);
       setInfoMessage("Queue created successfully.");
       setActiveMenu("queues");
     } catch (error) {
@@ -453,7 +469,6 @@ const CreateAntrian: React.FC = () => {
         collection(db as Firestore, "queues", selectedQueueId, "tickets"),
         where("status", "==", "waiting"),
         orderBy("createdAt", "asc"),
-        limit(1),
       );
 
       const [servingSnapshot, waitingSnapshot] = await Promise.all([
@@ -485,7 +500,7 @@ const CreateAntrian: React.FC = () => {
         }),
         updateDoc(queueRef, {
           currentNumber: nextData.number,
-          waitingCount: Math.max((queueData.waitingCount ?? 0) - 1, 0),
+          waitingCount: Math.max(waitingSnapshot.size - 1, 0),
           updatedAt: serverTimestamp(),
         }),
       ]);
@@ -515,7 +530,7 @@ const CreateAntrian: React.FC = () => {
         const ticketSnapshot = await transaction.get(ticketRef);
 
         if (!queueSnapshot.exists() || !ticketSnapshot.exists()) {
-          throw new Error("Number not found.");
+          throw new Error("Queue number not found.");
         }
 
         const queueData = queueSnapshot.data() as QueueItem;
@@ -556,19 +571,25 @@ const CreateAntrian: React.FC = () => {
         throw new Error("Queue code and customer name are required.");
       }
 
-      const queueRef = doc(db as Firestore, "queues", queueCode);
-      const queueSnapshot = await getDoc(queueRef);
-
-      if (!queueSnapshot.exists()) {
+      const queueQuery = query(
+        collection(db as Firestore, "queues"),
+        where("publicCode", "==", queueCode),
+        limit(1),
+      );
+      const queueSnapshot = await getDocs(queueQuery);
+      if (queueSnapshot.empty) {
         throw new Error("Queue code is invalid.");
       }
 
-      const queueData = queueSnapshot.data() as QueueItem;
+      const queueDoc = queueSnapshot.docs[0];
+      const queueId = queueDoc.id;
+      const queueData = queueDoc.data() as QueueItem;
       if (!queueData.isOpen) {
         throw new Error("Queue is currently closed.");
       }
 
-      const ticketRef = doc(collection(db as Firestore, "queues", queueCode, "tickets"));
+      const queueRef = doc(db as Firestore, "queues", queueId);
+      const ticketRef = doc(collection(db as Firestore, "queues", queueId, "tickets"));
 
       const ticketNumber = await runTransaction(db as Firestore, async (transaction) => {
         const queueTransactionSnapshot = await transaction.get(queueRef);
@@ -584,7 +605,7 @@ const CreateAntrian: React.FC = () => {
         const nextNumber = (queueTransactionData.lastIssuedNumber ?? 0) + 1;
 
         transaction.set(ticketRef, {
-          queueId: queueCode,
+          queueId,
           customerName: safeName,
           number: nextNumber,
           status: "waiting",
@@ -600,7 +621,7 @@ const CreateAntrian: React.FC = () => {
         return nextNumber;
       });
 
-      setClientTicketQueueId(queueCode);
+      setClientTicketQueueId(queueId);
       setClientTicketId(ticketRef.id);
       setClientTicketNumber(ticketNumber);
       setClientTicketPrefixCode(queueData.prefixCode);
@@ -726,7 +747,7 @@ const CreateAntrian: React.FC = () => {
               className="w-full text-sm text-blue-600 hover:underline"
             >
               {authMode === "register"
-                ? "Already have account? Login"
+                ? "Already have an account? Login"
                 : "Need an account? Register"}
             </button>
           </form>
@@ -952,7 +973,7 @@ const CreateAntrian: React.FC = () => {
                               </span>
                             </div>
                             <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                              Queue code: <span className="font-mono">{queueItem.id}</span>
+                              Queue code: <span className="font-mono">{getQueueDisplayCode(queueItem)}</span>
                             </p>
                             <div className="mt-2 flex flex-wrap gap-2">
                               <button
@@ -1015,7 +1036,7 @@ const CreateAntrian: React.FC = () => {
                   <div className="grid gap-3 md:grid-cols-4">
                     <div className="rounded-lg border p-3 dark:border-zinc-700">
                       <p className="text-xs text-zinc-500 dark:text-zinc-400">Queue code</p>
-                      <p className="font-mono text-sm">{selectedQueue.id}</p>
+                      <p className="font-mono text-sm">{getQueueDisplayCode(selectedQueue)}</p>
                     </div>
                     <div className="rounded-lg border p-3 dark:border-zinc-700">
                       <p className="text-xs text-zinc-500 dark:text-zinc-400">Current number</p>
@@ -1103,7 +1124,7 @@ const CreateAntrian: React.FC = () => {
                     value={clientQueueCode}
                     onChange={(event) => setClientQueueCode(event.target.value)}
                     className="w-full rounded-lg border px-3 py-2 font-mono dark:border-zinc-700 dark:bg-zinc-800"
-                    placeholder="Paste queue code from owner"
+                    placeholder="Example: A-ABC123"
                     required
                   />
                 </div>
@@ -1144,7 +1165,7 @@ const CreateAntrian: React.FC = () => {
                       </div>
                       <div className="rounded-lg border p-3 dark:border-zinc-700">
                         <p className="text-zinc-500 dark:text-zinc-400">Numbers ahead</p>
-                        <p className="text-lg font-semibold">{numbersAhead < 0 ? 0 : numbersAhead}</p>
+                        <p className="text-lg font-semibold">{numbersAhead}</p>
                       </div>
                     </div>
                     <p className="text-sm text-zinc-600 dark:text-zinc-300">
