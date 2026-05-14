@@ -18,6 +18,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
   onSnapshot,
   orderBy,
   query,
@@ -434,62 +435,62 @@ const CreateAntrian: React.FC = () => {
 
     try {
       const queueRef = doc(db as Firestore, "queues", selectedQueueId);
-      const waitingQuery = query(
-        collection(db as Firestore, "queues", selectedQueueId, "tickets"),
-        where("status", "==", "waiting"),
-        orderBy("createdAt", "asc"),
-      );
+      const queueSnapshot = await getDoc(queueRef);
+      if (!queueSnapshot.exists()) {
+        throw new Error("Queue not found.");
+      }
+
+      const queueData = queueSnapshot.data() as QueueItem;
+      if (!queueData.isOpen) {
+        throw new Error("Queue is closed.");
+      }
+
       const servingQuery = query(
         collection(db as Firestore, "queues", selectedQueueId, "tickets"),
         where("status", "==", "serving"),
       );
+      const waitingQuery = query(
+        collection(db as Firestore, "queues", selectedQueueId, "tickets"),
+        where("status", "==", "waiting"),
+        orderBy("createdAt", "asc"),
+        limit(1),
+      );
 
-      const called = await runTransaction(db as Firestore, async (transaction) => {
-        const queueSnapshot = await transaction.get(queueRef);
-        if (!queueSnapshot.exists()) {
-          throw new Error("Queue not found.");
-        }
+      const [servingSnapshot, waitingSnapshot] = await Promise.all([
+        getDocs(servingQuery),
+        getDocs(waitingQuery),
+      ]);
 
-        const queueData = queueSnapshot.data() as QueueItem;
-        if (!queueData.isOpen) {
-          throw new Error("Queue is closed.");
-        }
-
-        const servingSnapshot = await transaction.get(servingQuery);
-        servingSnapshot.docs.forEach((servingDoc) => {
-          transaction.update(servingDoc.ref, {
+      await Promise.all(
+        servingSnapshot.docs.map((servingDoc) =>
+          updateDoc(servingDoc.ref, {
             status: "done",
             servedAt: serverTimestamp(),
-          });
-        });
+          }),
+        ),
+      );
 
-        const waitingSnapshot = await transaction.get(waitingQuery);
-        if (waitingSnapshot.empty) {
-          return 0;
-        }
+      if (waitingSnapshot.empty) {
+        setInfoMessage("No waiting numbers in this queue.");
+        return;
+      }
 
-        const nextTicket = waitingSnapshot.docs[0];
-        const nextData = nextTicket.data() as TicketItem;
+      const nextTicket = waitingSnapshot.docs[0];
+      const nextData = nextTicket.data() as TicketItem;
 
-        transaction.update(nextTicket.ref, {
+      await Promise.all([
+        updateDoc(nextTicket.ref, {
           status: "serving",
           calledAt: serverTimestamp(),
-        });
-
-        transaction.update(queueRef, {
+        }),
+        updateDoc(queueRef, {
           currentNumber: nextData.number,
           waitingCount: Math.max((queueData.waitingCount ?? 0) - 1, 0),
           updatedAt: serverTimestamp(),
-        });
+        }),
+      ]);
 
-        return nextData.number;
-      });
-
-      if (called === 0) {
-        setInfoMessage("No waiting numbers in this queue.");
-      } else {
-        setInfoMessage(`Now serving number ${called}.`);
-      }
+      setInfoMessage(`Now serving number ${nextData.number}.`);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to call next number.";
       setErrorMessage(message);
