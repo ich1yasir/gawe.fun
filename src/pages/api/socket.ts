@@ -1,7 +1,7 @@
 import { NextApiRequest } from 'next';
 import { Server as ServerIO } from 'socket.io';
-import { NextApiResponseServerIO, SocketWithData } from '../../lib/socket';
-import { channelManager } from '../../lib/channelManager';
+import { NextApiResponseServerIO, SocketWithData } from '../../../lib/socket';
+import { channelManager } from '../../../lib/channelManager';
 
 export default function handler(req: NextApiRequest, res: NextApiResponseServerIO) {
   if (res.socket.server.io) {

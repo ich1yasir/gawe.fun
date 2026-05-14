@@ -1,12 +1,5 @@
 import type { Metadata } from "next";
-import { Lato } from "next/font/google";
 import Background from "../../../components/antrian/Background";
-
-const lato = Lato({
-  variable: "--font-lato",
-  subsets: ["latin"],
-  weight: ["400", "700"], // adjust weights as needed
-});
 
 export const metadata: Metadata = {
   title: "Antrian Management App",
@@ -19,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className={`${lato.variable} antialiased`}>
+    <div className="antialiased">
       <Background />
       {children}
     </div>
