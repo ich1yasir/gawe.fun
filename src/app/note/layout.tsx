@@ -1,0 +1,22 @@
+import type { Metadata } from "next";
+import Background from "../../../components/note/Background";
+
+
+export const metadata: Metadata = {
+  title: "OxNote - Secure Your Personal Note",
+  description: "This note is totally your data, only available on your device. We never store anything on our server. OxNote is your personal, private, and secure note-taking app—your notes, your control!",
+};
+
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <div className="antialiased">
+      <Background />
+      {children}
+    </div>
+  );
+}
