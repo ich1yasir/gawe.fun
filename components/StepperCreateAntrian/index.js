@@ -25,7 +25,7 @@ function StepperCreateAntrian({ userInfo = null }) {
     const getPrefixTemp = (name_) => {
         if (name_){
             const dataI = name_.split(' ');
-            const initial = ''
+            let initial = ''
             dataI.forEach((v, i) => {
                 initial += v.charAt(0).toUpperCase();
             })
