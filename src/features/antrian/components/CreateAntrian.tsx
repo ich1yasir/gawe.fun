@@ -276,7 +276,15 @@ const CreateAntrian: React.FC = () => {
           email,
           authPassword,
         );
-        const hasInitialQueue = queueName.trim() && queuePrefixCode.trim();
+        const safeInitialQueueName = queueName.trim();
+        const safeInitialQueuePrefixCode = queuePrefixCode.trim();
+        const hasPartialInitialQueue =
+          (safeInitialQueueName && !safeInitialQueuePrefixCode) ||
+          (!safeInitialQueueName && safeInitialQueuePrefixCode);
+        if (hasPartialInitialQueue) {
+          throw new Error("Fill both initial queue name and prefix code, or leave both empty.");
+        }
+        const hasInitialQueue = safeInitialQueueName && safeInitialQueuePrefixCode;
         if (hasInitialQueue) {
           try {
             await createQueue(credential.user.uid);
