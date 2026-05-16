@@ -28,6 +28,11 @@ import {
   where,
 } from "firebase/firestore";
 import { auth, db, isFirebaseConfigured } from "../../../../lib/firebase";
+import {
+  generateQueueCode,
+  getQueueDisplayCode,
+  normalizeQueueCode,
+} from "../utils/queue";
 
 type MenuKey = "dashboard" | "queues" | "details" | "client";
 
@@ -62,19 +67,6 @@ type TicketItem = {
 
 const sectors = ["Finance", "Hospitality", "Government", "Restaurant", "Other"];
 const employeeRanges = ["1-10", "11-50", "51-200", "201-500", "501-1000", "1000+"];
-
-function normalizeQueueCode(input: string) {
-  return input.trim().toUpperCase();
-}
-
-function generateQueueCode(prefixCode: string) {
-  const randomPart = Math.random().toString(36).slice(2, 8).toUpperCase();
-  return `${prefixCode}-${randomPart}`;
-}
-
-function getQueueDisplayCode(queue: QueueItem) {
-  return queue.publicCode ?? `${queue.prefixCode}-UNSET`;
-}
 
 const CreateAntrian: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState<MenuKey>("dashboard");
