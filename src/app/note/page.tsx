@@ -1,7 +1,6 @@
-import CreateAntrian from "../../../components/antrian/CreateAntrian";
 import Dashboard from "../../../components/note/Dashboard";
 
-const AntrianPage: React.FC = () => {
+const NotePage: React.FC = () => {
   return (
     <div className="container mx-auto p-4">
 
@@ -16,4 +15,4 @@ const AntrianPage: React.FC = () => {
   );
 };
 
-export default AntrianPage;
+export default NotePage;

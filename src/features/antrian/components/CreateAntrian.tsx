@@ -27,7 +27,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { auth, db, isFirebaseConfigured } from "../../lib/firebase";
+import { auth, db, isFirebaseConfigured } from "../../../../lib/firebase";
 
 type MenuKey = "dashboard" | "queues" | "details" | "client";
 
@@ -276,13 +276,18 @@ const CreateAntrian: React.FC = () => {
           email,
           authPassword,
         );
-        try {
-          await createQueue(credential.user.uid);
-          setInfoMessage("Account and initial queue created successfully.");
-        } catch (queueError) {
-          const queueMessage =
-            queueError instanceof Error ? queueError.message : "Unable to create initial queue.";
-          setInfoMessage(`Account created successfully, but initial queue failed: ${queueMessage}`);
+        const hasInitialQueue = queueName.trim() && queuePrefixCode.trim();
+        if (hasInitialQueue) {
+          try {
+            await createQueue(credential.user.uid);
+            setInfoMessage("Account and initial queue created successfully.");
+          } catch (queueError) {
+            const queueMessage =
+              queueError instanceof Error ? queueError.message : "Unable to create initial queue.";
+            setInfoMessage(`Account created successfully, but initial queue failed: ${queueMessage}`);
+          }
+        } else {
+          setInfoMessage("Account created successfully.");
         }
       } else {
         const credential = await signInWithEmailAndPassword(auth as Auth, email, authPassword);
@@ -636,7 +641,7 @@ const CreateAntrian: React.FC = () => {
   }
 
   const menuButtonClasses =
-    "rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-zinc-200 dark:hover:bg-zinc-700";
+    "rounded-full border border-zinc-200 px-4 py-2 text-sm font-medium transition hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800";
 
   if (!isFirebaseConfigured) {
     return (
@@ -650,11 +655,11 @@ const CreateAntrian: React.FC = () => {
   }
 
   return (
-    <div className="mx-auto mt-8 max-w-6xl space-y-6 rounded-xl bg-white/95 p-6 shadow-xl dark:bg-zinc-900/95">
-      <div className="space-y-1">
-        <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Antrian Management System</h2>
-        <p className="text-sm text-zinc-600 dark:text-zinc-300">
-          Manage queue creation, queue operations, and client progress in one place.
+    <div className="mx-auto max-w-6xl space-y-6 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-6 dark:border-zinc-700 dark:bg-zinc-900">
+      <div className="space-y-2">
+        <h2 className="text-2xl font-bold text-zinc-900 sm:text-3xl dark:text-zinc-50">Antrian Management</h2>
+        <p className="text-sm text-zinc-600 sm:text-base dark:text-zinc-300">
+          A clean and simple queue flow for staff and customers.
         </p>
       </div>
 
@@ -673,8 +678,11 @@ const CreateAntrian: React.FC = () => {
       {authLoading ? (
         <p className="text-sm text-zinc-600 dark:text-zinc-300">Checking authentication...</p>
       ) : !user ? (
-        <div className="grid gap-6 md:grid-cols-2">
-          <form onSubmit={handleAuthSubmit} className="space-y-4 rounded-xl border p-4 dark:border-zinc-700">
+        <div className="grid gap-6 lg:grid-cols-2">
+          <form
+            onSubmit={handleAuthSubmit}
+            className="space-y-4 rounded-2xl border border-zinc-200 p-5 dark:border-zinc-700"
+          >
             <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
               {authMode === "register" ? "Create account" : "Login"}
             </h3>
@@ -706,7 +714,7 @@ const CreateAntrian: React.FC = () => {
             {authMode === "register" && (
               <>
                 <div>
-                  <label className="mb-1 block text-sm font-medium">Initial Queue Name (optional)</label>
+                  <label className="mb-1 block text-sm font-medium">Initial queue name (optional)</label>
                   <input
                     type="text"
                     value={queueName}
@@ -717,7 +725,7 @@ const CreateAntrian: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-sm font-medium">Initial Prefix Code (optional)</label>
+                  <label className="mb-1 block text-sm font-medium">Initial prefix code (optional)</label>
                   <input
                     type="text"
                     value={queuePrefixCode}
@@ -752,56 +760,55 @@ const CreateAntrian: React.FC = () => {
             </button>
           </form>
 
-          <div className="space-y-3 rounded-xl border p-4 dark:border-zinc-700">
-            <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Feature overview</h3>
+          <div className="space-y-3 rounded-2xl border border-zinc-200 p-5 dark:border-zinc-700">
+            <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Simple flow</h3>
             <ul className="list-disc space-y-2 pl-5 text-sm text-zinc-700 dark:text-zinc-300">
-              <li>Create queue accounts and owner login using Firebase Authentication.</li>
-              <li>Dashboard with simple queue statistics and quick menu.</li>
-              <li>Queue management for create, edit, and delete operations.</li>
-              <li>Queue detail actions for open/close queue, next number, and deleting numbers.</li>
-              <li>Client interface to register queue numbers and track live progress.</li>
+              <li>Sign in as owner and create one or more queues.</li>
+              <li>Use queue management to edit or remove queues.</li>
+              <li>Open service panel to call next customer number.</li>
+              <li>Use customer panel to take number and monitor status.</li>
             </ul>
           </div>
         </div>
       ) : (
         <>
-          <div className="flex flex-wrap items-center gap-3 rounded-xl border p-3 dark:border-zinc-700">
+          <div className="flex flex-col gap-3 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-700 sm:flex-row sm:items-center">
             <p className="text-sm text-zinc-700 dark:text-zinc-300">
               Logged in as <span className="font-semibold">{user.email}</span>
             </p>
-            <div className="ml-auto flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 sm:ml-auto">
               <button
                 type="button"
-                className={`${menuButtonClasses} ${activeMenu === "dashboard" ? "bg-zinc-200 dark:bg-zinc-700" : ""}`}
+                className={`${menuButtonClasses} ${activeMenu === "dashboard" ? "bg-zinc-900 text-white dark:bg-zinc-50 dark:text-zinc-900" : ""}`}
                 onClick={() => setActiveMenu("dashboard")}
               >
-                Dashboard
+                Overview
               </button>
               <button
                 type="button"
-                className={`${menuButtonClasses} ${activeMenu === "queues" ? "bg-zinc-200 dark:bg-zinc-700" : ""}`}
+                className={`${menuButtonClasses} ${activeMenu === "queues" ? "bg-zinc-900 text-white dark:bg-zinc-50 dark:text-zinc-900" : ""}`}
                 onClick={() => setActiveMenu("queues")}
               >
-                Queue Management
+                Manage Queues
               </button>
               <button
                 type="button"
-                className={`${menuButtonClasses} ${activeMenu === "details" ? "bg-zinc-200 dark:bg-zinc-700" : ""}`}
+                className={`${menuButtonClasses} ${activeMenu === "details" ? "bg-zinc-900 text-white dark:bg-zinc-50 dark:text-zinc-900" : ""}`}
                 onClick={() => setActiveMenu("details")}
               >
-                Queue Details
+                Service Panel
               </button>
               <button
                 type="button"
-                className={`${menuButtonClasses} ${activeMenu === "client" ? "bg-zinc-200 dark:bg-zinc-700" : ""}`}
+                className={`${menuButtonClasses} ${activeMenu === "client" ? "bg-zinc-900 text-white dark:bg-zinc-50 dark:text-zinc-900" : ""}`}
                 onClick={() => setActiveMenu("client")}
               >
-                Client Interface
+                Customer Panel
               </button>
               <button
                 type="button"
                 onClick={handleLogout}
-                className="rounded-lg border px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:border-zinc-700 dark:text-red-300 dark:hover:bg-red-900/20"
+                className="rounded-full border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:border-red-900/60 dark:text-red-300 dark:hover:bg-red-900/20"
               >
                 Logout
               </button>
@@ -810,41 +817,41 @@ const CreateAntrian: React.FC = () => {
 
           {activeMenu === "dashboard" && (
             <div className="grid gap-4 md:grid-cols-3">
-              <div className="rounded-xl border p-4 dark:border-zinc-700">
+              <div className="rounded-2xl border border-zinc-200 p-4 dark:border-zinc-700">
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">Total Queues</p>
                 <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">{totalQueues}</p>
               </div>
-              <div className="rounded-xl border p-4 dark:border-zinc-700">
+              <div className="rounded-2xl border border-zinc-200 p-4 dark:border-zinc-700">
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">Open Queues</p>
                 <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">{openQueues}</p>
               </div>
-              <div className="rounded-xl border p-4 dark:border-zinc-700">
+              <div className="rounded-2xl border border-zinc-200 p-4 dark:border-zinc-700">
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">Waiting Numbers</p>
                 <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">{totalWaiting}</p>
               </div>
-              <div className="rounded-xl border p-4 dark:border-zinc-700 md:col-span-3">
-                <p className="mb-2 text-sm font-medium text-zinc-600 dark:text-zinc-300">Main Menu</p>
+              <div className="rounded-2xl border border-zinc-200 p-4 dark:border-zinc-700 md:col-span-3">
+                <p className="mb-2 text-sm font-medium text-zinc-600 dark:text-zinc-300">Quick actions</p>
                 <div className="flex flex-wrap gap-2">
                   <button
                     type="button"
-                    className="rounded-lg bg-zinc-800 px-3 py-2 text-sm font-semibold text-white hover:bg-zinc-700"
+                    className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
                     onClick={() => setActiveMenu("queues")}
                   >
                     Manage queues
                   </button>
                   <button
                     type="button"
-                    className="rounded-lg bg-zinc-800 px-3 py-2 text-sm font-semibold text-white hover:bg-zinc-700"
+                    className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
                     onClick={() => setActiveMenu("details")}
                   >
-                    Open queue details
+                    Open service panel
                   </button>
                   <button
                     type="button"
-                    className="rounded-lg bg-zinc-800 px-3 py-2 text-sm font-semibold text-white hover:bg-zinc-700"
+                    className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
                     onClick={() => setActiveMenu("client")}
                   >
-                    Open client interface
+                    Open customer panel
                   </button>
                 </div>
               </div>
@@ -852,8 +859,11 @@ const CreateAntrian: React.FC = () => {
           )}
 
           {activeMenu === "queues" && (
-            <div className="grid gap-6 md:grid-cols-2">
-              <form onSubmit={handleCreateQueue} className="space-y-3 rounded-xl border p-4 dark:border-zinc-700">
+            <div className="grid gap-6 lg:grid-cols-2">
+              <form
+                onSubmit={handleCreateQueue}
+                className="space-y-3 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-700"
+              >
                 <h3 className="text-lg font-semibold">Create New Queue</h3>
                 <div>
                   <label className="mb-1 block text-sm font-medium">Queue name</label>
@@ -912,7 +922,7 @@ const CreateAntrian: React.FC = () => {
                 </button>
               </form>
 
-              <div className="space-y-3 rounded-xl border p-4 dark:border-zinc-700">
+              <div className="space-y-3 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-700">
                 <h3 className="text-lg font-semibold">Queue List</h3>
                 {queues.length === 0 ? (
                   <p className="text-sm text-zinc-500 dark:text-zinc-400">No queues created yet.</p>
@@ -921,7 +931,7 @@ const CreateAntrian: React.FC = () => {
                     {queues.map((queueItem) => (
                       <div
                         key={queueItem.id}
-                        className="rounded-lg border p-3 text-sm dark:border-zinc-700"
+                        className="rounded-xl border border-zinc-200 p-3 text-sm dark:border-zinc-700"
                       >
                         {editingQueueId === queueItem.id ? (
                           <div className="space-y-2">
@@ -1012,7 +1022,7 @@ const CreateAntrian: React.FC = () => {
           )}
 
           {activeMenu === "details" && (
-            <div className="space-y-4 rounded-xl border p-4 dark:border-zinc-700">
+            <div className="space-y-4 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-700">
               <div>
                 <label className="mb-1 block text-sm font-medium">Select queue</label>
                 <select
@@ -1033,47 +1043,47 @@ const CreateAntrian: React.FC = () => {
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">Choose a queue to manage details.</p>
               ) : (
                 <>
-                  <div className="grid gap-3 md:grid-cols-4">
-                    <div className="rounded-lg border p-3 dark:border-zinc-700">
-                      <p className="text-xs text-zinc-500 dark:text-zinc-400">Queue code</p>
-                      <p className="font-mono text-sm">{getQueueDisplayCode(selectedQueue)}</p>
+                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                      <div className="rounded-xl border border-zinc-200 p-3 dark:border-zinc-700">
+                        <p className="text-xs text-zinc-500 dark:text-zinc-400">Queue code</p>
+                        <p className="font-mono text-sm">{getQueueDisplayCode(selectedQueue)}</p>
+                      </div>
+                      <div className="rounded-xl border border-zinc-200 p-3 dark:border-zinc-700">
+                        <p className="text-xs text-zinc-500 dark:text-zinc-400">Current number</p>
+                        <p className="text-xl font-bold">{selectedQueue.currentNumber}</p>
+                      </div>
+                      <div className="rounded-xl border border-zinc-200 p-3 dark:border-zinc-700">
+                        <p className="text-xs text-zinc-500 dark:text-zinc-400">Last issued</p>
+                        <p className="text-xl font-bold">{selectedQueue.lastIssuedNumber}</p>
+                      </div>
+                      <div className="rounded-xl border border-zinc-200 p-3 dark:border-zinc-700">
+                        <p className="text-xs text-zinc-500 dark:text-zinc-400">Waiting</p>
+                        <p className="text-xl font-bold">{selectedQueue.waitingCount}</p>
+                      </div>
                     </div>
-                    <div className="rounded-lg border p-3 dark:border-zinc-700">
-                      <p className="text-xs text-zinc-500 dark:text-zinc-400">Current number</p>
-                      <p className="text-xl font-bold">{selectedQueue.currentNumber}</p>
-                    </div>
-                    <div className="rounded-lg border p-3 dark:border-zinc-700">
-                      <p className="text-xs text-zinc-500 dark:text-zinc-400">Last issued</p>
-                      <p className="text-xl font-bold">{selectedQueue.lastIssuedNumber}</p>
-                    </div>
-                    <div className="rounded-lg border p-3 dark:border-zinc-700">
-                      <p className="text-xs text-zinc-500 dark:text-zinc-400">Waiting</p>
-                      <p className="text-xl font-bold">{selectedQueue.waitingCount}</p>
-                    </div>
-                  </div>
 
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      onClick={() => toggleQueueStatus(true)}
-                      className="rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
-                    >
-                      Open Queue
-                    </button>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => toggleQueueStatus(true)}
+                        className="rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+                      >
+                        Open Queue
+                      </button>
                     <button
                       type="button"
                       onClick={() => toggleQueueStatus(false)}
-                      className="rounded-lg bg-zinc-600 px-3 py-2 text-sm font-semibold text-white hover:bg-zinc-700"
-                    >
-                      Close Queue
-                    </button>
+                        className="rounded-full bg-zinc-600 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-700"
+                      >
+                        Close Queue
+                      </button>
                     <button
                       type="button"
                       onClick={handleNextNumber}
-                      className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-                    >
-                      Next Number
-                    </button>
+                        className="rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                      >
+                        Next Number
+                      </button>
                   </div>
 
                   <div className="space-y-2">
@@ -1085,7 +1095,7 @@ const CreateAntrian: React.FC = () => {
                         {selectedQueueTickets.map((ticket) => (
                           <div
                             key={ticket.id}
-                            className="flex items-center justify-between rounded-lg border p-2 text-sm dark:border-zinc-700"
+                            className="flex items-center justify-between rounded-xl border border-zinc-200 p-3 text-sm dark:border-zinc-700"
                           >
                             <div>
                               <p className="font-medium">
@@ -1111,8 +1121,11 @@ const CreateAntrian: React.FC = () => {
           )}
 
           {activeMenu === "client" && (
-            <div className="grid gap-6 md:grid-cols-2">
-              <form onSubmit={handleClientRegister} className="space-y-3 rounded-xl border p-4 dark:border-zinc-700">
+            <div className="grid gap-6 lg:grid-cols-2">
+              <form
+                onSubmit={handleClientRegister}
+                className="space-y-3 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-700"
+              >
                 <h3 className="text-lg font-semibold">Queue Client Registration</h3>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">
                   Enter queue code and customer name to get a queue number.
@@ -1148,7 +1161,7 @@ const CreateAntrian: React.FC = () => {
                 </button>
               </form>
 
-              <div className="space-y-3 rounded-xl border p-4 dark:border-zinc-700">
+              <div className="space-y-3 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-700">
                 <h3 className="text-lg font-semibold">Queue Progress</h3>
                 {!clientTicketId ? (
                   <p className="text-sm text-zinc-500 dark:text-zinc-400">No ticket registered yet.</p>
@@ -1158,12 +1171,12 @@ const CreateAntrian: React.FC = () => {
                     <p className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
                       Your number: {clientTicketPrefixCode}-{clientTicketNumber}
                     </p>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div className="rounded-lg border p-3 dark:border-zinc-700">
+                    <div className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
+                      <div className="rounded-xl border border-zinc-200 p-3 dark:border-zinc-700">
                         <p className="text-zinc-500 dark:text-zinc-400">Current number</p>
                         <p className="text-lg font-semibold">{clientQueueCurrentNumber}</p>
                       </div>
-                      <div className="rounded-lg border p-3 dark:border-zinc-700">
+                      <div className="rounded-xl border border-zinc-200 p-3 dark:border-zinc-700">
                         <p className="text-zinc-500 dark:text-zinc-400">Numbers ahead</p>
                         <p className="text-lg font-semibold">{numbersAhead}</p>
                       </div>

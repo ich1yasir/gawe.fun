@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Background from "../../../components/antrian/Background";
 
 export const metadata: Metadata = {
   title: "Antrian Management App",
@@ -12,8 +11,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="antialiased">
-      <Background />
+    <div className="min-h-screen bg-zinc-50 antialiased dark:bg-zinc-950">
       {children}
     </div>
   );
