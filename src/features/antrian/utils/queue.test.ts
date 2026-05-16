@@ -16,6 +16,14 @@ describe("queue utils", () => {
     expect(generateQueueCode("A")).toBe("A-4FZZZX");
   });
 
+  it("keeps provided prefix in generated queue code", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0.5);
+
+    const generated = generateQueueCode("Counter");
+    expect(generated.startsWith("Counter-")).toBe(true);
+    expect(generated).toMatch(/^Counter-[A-Z0-9]{6}$/);
+  });
+
   it("uses public code for display when available", () => {
     expect(getQueueDisplayCode({ prefixCode: "A", publicCode: "A-XYZ123" })).toBe("A-XYZ123");
   });

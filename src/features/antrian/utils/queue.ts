@@ -8,7 +8,7 @@ export function normalizeQueueCode(input: string) {
 }
 
 export function generateQueueCode(prefixCode: string) {
-  const randomPart = Math.random().toString(36).slice(2, 8).toUpperCase();
+  const randomPart = Math.random().toString(36).slice(2, 8).toUpperCase().padEnd(6, "0");
   return `${prefixCode}-${randomPart}`;
 }
 
